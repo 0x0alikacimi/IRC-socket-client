@@ -7,14 +7,13 @@
 
 class user
 {
-	//heee
-	int a=0;
-
-	int l;
-
+	private :
+		std::string name;
+		std::string password;
+	public :
 };
 
-ß
+
 int a=0;
 
 
@@ -41,10 +40,8 @@ int main (int ac , char **av)
 {
 	if (ac == 3)
 	{
-		/*check if it valid else throw an exeption*/
 		int port = std::atoi(av[1]);
 		std::string password = av[2];
 		irc server(port, password);
 	}
-	/*throw in valid number of arguments*/
 }
