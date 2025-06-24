@@ -7,13 +7,14 @@
 
 class user
 {
-	private :
-		std::string name;
-		std::string password;
-	public :
+	//heee
+	int a=0;
+
+	int l;
+
 };
 
-
+ß
 int a=0;
 
 
