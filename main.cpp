@@ -8,14 +8,9 @@
 class user
 {
 	private :
-		std::string name;
-		std::string password;
+		int x = 0;
 	public :
 };
-
-
-int a=0;
-
 
 class irc
 {
@@ -30,10 +25,7 @@ class irc
 irc::irc(int port, std::string password) : port(port), password(password)
 {
 	sockaddr_in serv_add;
-	std::memset(&serv_add, 0, sizeof(serv_add));
-	serv_add.sin_family = AF_INET;//which type of ip (ip4/ ip6)
-	serv_add.sin_addr.s_addr = INADDR_ANY;
-	serv_add.sin_port = htons(port);
+
 }
 
 int main (int ac , char **av)
