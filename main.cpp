@@ -12,10 +12,6 @@ class user
 	public :
 };
 
-
-int a=0;
-
-
 class irc
 {
 	private :
