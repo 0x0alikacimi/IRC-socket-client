@@ -8,8 +8,7 @@
 class user
 {
 	private :
-		std::string name;
-		std::string password;
+	std::string y;
 	public :
 };
 
@@ -20,6 +19,7 @@ class irc
 		std::string password;
 		int port;
 	public :
+		irc();
 		irc(int port, std::string password);
 };
 
