@@ -30,6 +30,14 @@ irc::irc(int port, std::string password) : port(port), password(password)
 	serv_add.sin_family = AF_INET;//which type of ip (ip4/ ip6)
 	serv_add.sin_addr.s_addr = INADDR_ANY;
 	serv_add.sin_port = htons(port);
+
+	int server_fd = socket(AF_INET, SOCK_STREAM, 0);/*It opens a virtual communication endpoint*/
+	//not connected yet or associated with any thing
+
+	bind(server_fd, (sockaddr *)&serv_add, sizeof(serv_add));/*associates the socket with a specific IP address and port number*/
+	//its like “I’m listening on IP X.X.X.X and port Y.”
+
+	// listen(server_fd)
 }
 
 int main (int ac , char **av)
