@@ -35,16 +35,15 @@ class Irc
 void Irc::start_server()
 {
 	std::cout << "srever is lestenning to port : " << port << std::endl;
+	std::vector<pollfd> pfds;
+
 	while (true)
 	{
-		sockaddr_in client_addr ;
-		socklen_t client_len = sizeof(client_addr);
+		int check_poll = poll(pfds.data(), pfds.size(), -1);
+		/*If you pass -1, the call will block indefinitely until at least one of the monitored file descriptors becomes "ready" (i.e., an event has occurred on it).*/
 
-		int client_fd = accept(server_fd, (sockaddr *)&client_addr, &client_len);
-		if (client_fd < 0)
-			continue;
-		users.push_back(User(client_fd));
-		std::cout << "new client conneeeected !!" << users.size() << std::endl;
+		// if (pfds[0].revents & POLLIN)/**/
+
 	}
 }
 
@@ -72,7 +71,7 @@ int main (int ac , char **av)
 {
 	if (ac == 3)
 	{
-		/*check if it valid else throw an exeption*/
+		/*check if it valid else throw an exception*/
 		int port = std::atoi(av[1]);
 		std::string password = av[2];
 		Irc server(port, password);
