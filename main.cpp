@@ -36,15 +36,58 @@ void Irc::start_server()
 {
 	std::cout << "srever is lestenning to port : " << port << std::endl;
 	std::vector<pollfd> pfds;
+	struct pollfd pfd;
+	pfd.fd = server_fd;
+	pfd.events = POLLIN;
+	pfd.revents = 0;
+	pfds.push_back(pfd);
+	struct sockaddr_in client_addr;
+	socklen_t client_len = sizeof(client_addr);
 
 	while (true)
 	{
 		int check_poll = poll(pfds.data(), pfds.size(), -1);
-		/*If you pass -1, the call will block indefinitely until at least one of the monitored file descriptors becomes "ready" (i.e., an event has occurred on it).*/
+		/*If -1, the call will block indefinitely until at least one of the monitored file descriptors becomes "ready" (i.e., an event has occurred on it).*/
 
-		// if (pfds[0].revents & POLLIN)/**/
-
+		if (pfds[0].events & POLLIN)
+		{
+			int new_client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);/*!*/
+			if (new_client_fd < 0)
+			{
+				std::cerr << "error accepting new client." << std::endl;
+				continue;
+			}
+			std::cout << "new client connected!" << std::endl;
+			struct pollfd new_pfd;
+			new_pfd.fd = new_client_fd;
+			new_pfd.events = POLLIN;
+			new_pfd.revents = 0;
+			pfds.push_back(new_pfd);
+		}
+		int i = 1;
+		while(i < pfds.size())
+		{
+			if (pfds[i].revents & POLLIN)
+			{
+				char buff[1024];
+				int n = read(pfds[i].fd, buff, sizeof(buff));
+				if (n <= 0)
+				{
+					close (pfds[i].fd);
+					std::cout << "Client disconnected!" << std::endl;
+					pfds.erase(pfds.begin() + i); // remove the client socket from the poll list
+					i--; // adjust the index since after removing an element
+				}
+				else
+				{
+					buff[n] = '\0';
+					std::cout << "received : " << buff << std::endl;
+				}
+			}
+			i++;
+		}
 	}
+	close(server_fd);
 }
 
 
