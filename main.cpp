@@ -11,21 +11,6 @@
 #define MAX_PENDING 1 /*is the backlog queue size (max pending connections waiting).*/
 #define BLOCK_WAIT -1 /*blocks indefinitely until at least one socket has some activity*/
 
-
-class MyErrs
-{
-	class InvalidInput: public std::exception
-		{
-			public :
-				virtual const char *what() const throw()
-				{
-					return ("");//TODO
-				}
-		};
-	// class
-};
-
-
 class User
 {
 	private :
@@ -93,10 +78,11 @@ void Irc::start_server()
 				continue;
 			}
 			fcntl(new_client_fd, F_SETFL, O_NONBLOCK);
-			std::cout << "new client connected!" << "\n" << std::endl;
 			struct pollfd new_pfd; new_pfd.fd = new_client_fd; new_pfd.events = POLLIN; new_pfd.revents = 0;
 			pfds.push_back(new_pfd);
+			/*now I gotta check the password and the rest of data before accepting him or not */
 			users.push_back(User(new_client_fd));
+			std::cout << "new client connected!" << "\n" << std::endl;
 		}
 
 		int i = 1;
