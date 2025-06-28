@@ -36,10 +36,8 @@ void Irc::start_server()
 {
 	std::cout << "srever is lestenning to port : " << port << std::endl;
 	std::vector<pollfd> pfds;
-	struct pollfd pfd;
-	pfd.fd = server_fd;
-	pfd.events = POLLIN;
-	pfd.revents = 0;
+
+	struct pollfd pfd; pfd.fd = server_fd; pfd.events = POLLIN;pfd.revents = 0;
 	pfds.push_back(pfd);
 	struct sockaddr_in client_addr;
 	socklen_t client_len = sizeof(client_addr);
@@ -58,12 +56,10 @@ void Irc::start_server()
 				continue;
 			}
 			std::cout << "new client connected!" << std::endl;
-			struct pollfd new_pfd;
-			new_pfd.fd = new_client_fd;
-			new_pfd.events = POLLIN;
-			new_pfd.revents = 0;
+			struct pollfd new_pfd; new_pfd.fd = new_client_fd; new_pfd.events = POLLIN; new_pfd.revents = 0;
 			pfds.push_back(new_pfd);
 		}
+		
 		int i = 1;
 		while(i < pfds.size())
 		{
