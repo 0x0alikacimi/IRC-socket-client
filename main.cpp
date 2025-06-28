@@ -59,7 +59,7 @@ void Irc::start_server()
 			struct pollfd new_pfd; new_pfd.fd = new_client_fd; new_pfd.events = POLLIN; new_pfd.revents = 0;
 			pfds.push_back(new_pfd);
 		}
-		
+
 		int i = 1;
 		while(i < pfds.size())
 		{
@@ -110,11 +110,11 @@ int main (int ac , char **av)
 {
 	if (ac == 3)
 	{
-		/*check if it valid else throw an exception*/
+		/*check if it valid else throw an exception*//*not now*/
 		int port = std::atoi(av[1]);
 		std::string password = av[2];
 		Irc server(port, password);
 		server.start_server();
 	}
-	/*throw unvalid number of arguments*/
+	/*throw unvalid number of arguments*//*not now */
 }
