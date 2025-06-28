@@ -7,6 +7,25 @@
 #include <fcntl.h>
 #include <poll.h>
 
+#define DEF_PROTOCOL 0 /*the default protocol for IPv4 TCP, which is TCP itself.*/
+#define MAX_PENDING 1 /*is the backlog queue size (max pending connections waiting).*/
+#define BLOCK_WAIT -1 /*blocks indefinitely until at least one socket has some activity*/
+
+
+class MyErrs
+{
+	class InvalidInput: public std::exception
+		{
+			public :
+				virtual const char *what() const throw()
+				{
+					return ("");//TODO
+				}
+		};
+	// class
+};
+
+
 class User
 {
 	private :
@@ -52,7 +71,6 @@ User *Irc::look_for(int fd)
 	return (NULL);
 }
 
-
 void Irc::start_server()
 {
 	std::cout << "srever is lestenning to port : " << port << "\n" << std::endl;
@@ -65,7 +83,7 @@ void Irc::start_server()
 
 	while (true)
 	{
-		int check_poll = poll(pfds.data(), pfds.size(), -1);
+		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
 		if (pfds[0].revents & POLLIN)
 		{
 			int new_client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);/*!*/
@@ -110,7 +128,7 @@ void Irc::start_server()
 
 Irc::Irc(int port, std::string password) : port(port), password(password)
 {
-	server_fd = socket(AF_INET, SOCK_STREAM, 0);
+	server_fd = socket(AF_INET, SOCK_STREAM, DEF_PROTOCOL);
 
 	fcntl(server_fd, F_SETFL, O_NONBLOCK);
 
@@ -122,7 +140,7 @@ Irc::Irc(int port, std::string password) : port(port), password(password)
 
 	bind(server_fd, (sockaddr *)&serv_add, sizeof(serv_add));
 
-	listen(server_fd, 1);
+	listen(server_fd, MAX_PENDING);
 }
 
 int main (int ac , char **av)
