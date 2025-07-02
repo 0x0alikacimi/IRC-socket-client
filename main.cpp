@@ -69,6 +69,11 @@ void Irc::start_server()
 	while (true)
 	{
 		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
+		if (check_poll < 0)
+		{
+			std::cerr << "pll " << std::endl;
+			break;
+		}
 		if (pfds[0].revents & POLLIN)
 		{
 			int new_client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);/*!*/
@@ -77,7 +82,7 @@ void Irc::start_server()
 				std::cerr << "error accepting new client." << std::endl;
 				continue;
 			}
-			fcntl(new_client_fd, F_SETFL, O_NONBLOCK);
+			/*fcntl(new_client_fd, F_SETFL, O_NONBLOCK);*/
 			struct pollfd new_pfd; new_pfd.fd = new_client_fd; new_pfd.events = POLLIN; new_pfd.revents = 0;
 			pfds.push_back(new_pfd);
 			/*now I gotta check the password and the rest of data before accepting him or not */
@@ -103,6 +108,7 @@ void Irc::start_server()
 				else
 				{
 					buff[n] = '\0';
+
 					std::cout << "received form " << i << ": " << buff << std::endl;
 				}
 			}
@@ -133,9 +139,28 @@ int main (int ac , char **av)
 {
 	if (ac == 3)
 	{
-		int port = std::atoi(av[1]);
-		std::string password = av[2];
-		Irc server(port, password);
-		server.start_server();
+		try
+		{
+			int port = std::atoi(av[1]);
+			if (port <= 0 || port >= 65535)
+			{
+				std::cerr << "invalid port number" << std::endl;
+				return 1;
+			}
+			std::string password = av[2];
+			if (password.size() < 3)
+			{
+				std::cerr << "invalid password " << std::endl;
+				return 1;
+			}
+			Irc server(port, password);
+			server.start_server();
+		}
+		catch(std::exception &e)
+		{
+			std::cerr << e.what() << std::endl;
+			return (1);
+		}
+		return (0);
 	}
 }
