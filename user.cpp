@@ -13,3 +13,7 @@ std::string User::getNickname() const{
 std::string User::getUsername() const{
 	return username;
 }
+
+
+User::User(int fd) : user_fd(fd) {
+}

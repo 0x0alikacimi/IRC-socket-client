@@ -45,8 +45,6 @@ void Server::start_server()
 				{
 					close (pfds[i].fd);
 					std::cout << "Client disconnected!" << std::endl;
-					// pfds.erase(pfds.begin() + i);
-					// users.erase(users.begin() + (i - 1));
 					remove_pending_client(pfds[i].fd);
 					remove_user(pfds[i].fd);
 					pfds.erase(pfds.begin() + i);
@@ -61,9 +59,13 @@ void Server::start_server()
 					if (pending)
 					{
 						/*deal with pending*/
-						if (isReadyForRegistration((std::string&)buff, pending)){
-							std::cout << "marhba biiik" << std::endl;
-							//add the pending client to the users
+						if (isReadyForRegistration((std::string&)buff, pending))
+						{
+							std::cout << "Client registered successfully" << std::endl;
+							User new_user(pending->get_fd());
+							// set the user's nickname and username from pending
+							users.push_back(new_user);
+							remove_pending_client(pending->get_fd());
 						}
 					}
 					else if (user)
@@ -71,6 +73,7 @@ void Server::start_server()
 						/*deal with user*/
 						dealWIthUser((std::string&)buff, user);
 					}
+					buff[n] = '\0';
 					std::cout << "received form " << i << ": " << buff << std::endl;
 				}
 			}
