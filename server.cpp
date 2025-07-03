@@ -118,21 +118,54 @@ Channel* Server::getChannel(std::string& name, std::string& key){
 
 void Server::dealWIthUser(std::string& buff, User* user){
 	std::vector<std::string> tokens = splitBySpace(buff);
-	if (tokens.empty() || tokens.size() < 2 || tokens.size() > 3) {
-		std::cout << "Unvalid command" << std::endl;
+	if (tokens.empty()) {
+		std::cout << "empty command" << std::endl;
 		return;
 	}
-	std::string command = tokens[0];
-	if (command == "JOIN" && !tokens[1].empty()){
-		std::string name = tokens[1];
+	std::string command = parsse(tokens[0]);
+	if (command == "JOIN" && tokens.size() >= 2 && tokens.size() <= 3){
+		std::string name = parsse(tokens[1]);
 		std::string key = "";
-		if (tokens.size() == 3 && !tokens[2].empty())
-			key = tokens[2];
+		if (tokens.size() == 3)
+			key = parsse(tokens[2]);
 		Channel* channel = getChannel(name, key);
 		channel->handleJoinCommand(user, key);
 	}
+	else if (command == "KICK" && tokens.size() >= 3 && tokens.size() <= 4){
+		std::string channelName = parsse(tokens[1]);
+		std::string name = parsse(tokens[2]);
+		std::string delComment = "";
+		if (tokens.size() == 4)
+			delComment = parsse(tokens[3]);
+		Channel* channel = getChannelName(channelName);
+		if (!channel)
+			return ;
+		User* delUser = getDelUser(name);
+		if (!delUser)
+			return ;
+		channel->handleKickCommand(user, delUser, delComment);
+	}
 	else {
-		std::cout << "Unknown command" << std::endl;
+		std::cout << "Unknown/Unvalid command" << std::endl;
 		return;
 	}
 }
+
+Channel* Server::getChannelName(std::string& delChannel){
+	std::vector <Channel>::iterator it = channels.begin();
+	for (; it != channels.end(); ++it)
+		if (it->getName() == delChannel)
+			return &(*it);
+	std::cout << "The Channel : " << delChannel << " does not exist " << std::endl;
+	return NULL;
+}
+
+User* Server::getDelUser(std::string& name){
+	std::vector <User>::iterator it = users.begin();
+	for (; it != users.end(); ++it)
+		if (it->getUsername() == name)
+			return &(*it);
+	std::cout << "The User : " << name << " does not exist in the server " << std::endl;
+	return NULL;
+}
+

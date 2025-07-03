@@ -53,5 +53,6 @@ class PendingClient{
 	};
 
 	std::vector<std::string> splitBySpace(const std::string& input);
+	std::string parsse(std::string& std);
 
 #endif

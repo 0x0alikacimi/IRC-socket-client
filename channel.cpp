@@ -31,17 +31,18 @@ bool Channel::isUserInChannel(int user_fd) const{
     return std::find(users_fd.begin(), users_fd.end(), user_fd) != users_fd.end();
 }
 
-void Channel::addUser(int user_fd, const std::string& key){
+bool Channel::addUser(int user_fd, const std::string& key){
     if (isUserInChannel(user_fd)){
 		std::cout << "User already in Channel : " << name << std::endl;
-        return ;
+        return false;
 	}
 	if (hasKey() && !checkKey(key)){
-		std::cout << "Key incorrect : " << name << std::endl;
-        return ;
+		std::cout << "Key incorrect" << std::endl;
+        return false;
 	}
     users_fd.push_back(user_fd);
-	std::cout << "User added successfully" << std::endl;
+	std::cout << "The user added successfully to Channel : " << name << std::endl;
+	return true;
 }
 
 void Channel::removeUser(int user_fd) {
@@ -62,8 +63,11 @@ bool Channel::isOperator(int user_fd) const{
 }
 
 void Channel::addOperator(int user_fd){
-    if (!isOperator(user_fd))
+    if (!isOperator(user_fd)){
+		std::cout << "The user " << user_fd << " is an Operator now in the Channel " << name << std::endl;
         operators_fd.push_back(user_fd);
+		return ;
+	}
 }
 
 bool Channel::isInvited(int user_fd) const{
@@ -76,5 +80,27 @@ void Channel::invite(int user_fd){
 }
 
 void Channel::handleJoinCommand(User* user, std::string& key){
-	addUser(user->get_fd(), key);
+	if (addUser(user->get_fd(), key))
+		addOperator(user->get_fd());
+}
+
+void Channel::handleKickCommand(User* user, User* delUser, std::string& delComment){
+	if (!isUserInChannel(user->get_fd())){
+		std::cout << "The User : " << user->getUsername() << " is NOT Allowed to KICK from this channel" << std::endl;
+		return ;
+	}
+	if (!isOperator(user->get_fd())){
+		std::cout << "The User : " << user->getUsername() << " is not an operator " << std::endl;
+		return ;
+	}
+	if (!isUserInChannel(delUser->get_fd())){
+		std::cout << "The User : " << delUser->getUsername() << " is not in channel" << std::endl;
+		return ;
+	}
+	removeUser(delUser->get_fd());
+	std::cout << "The User : " << delUser->getUsername() << " has been removed successfully " ;
+	if (!delComment.empty())
+		std::cout << "Because : " << delComment << std::endl;
+	else
+		std::cout << std::endl;
 }

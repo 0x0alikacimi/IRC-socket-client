@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <poll.h>
 #include <cstring>
+#include <cstdlib>
 
 #define DEF_PROTOCOL 0 /*the default protocol for IPv4 TCP, which is TCP itself.*/
 #define MAX_PENDING 1 /*is the backlog queue size (max pending connections waiting).*/
@@ -27,6 +28,5 @@ class User
 		std::string getUsername() const;
 		std::string getNickname() const;
 };
-
 
 #endif

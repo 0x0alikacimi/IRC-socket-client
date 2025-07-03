@@ -27,9 +27,11 @@ class Server
 		void pending_to_user(PendingClient *client);/*later*/
 
 		bool isReadyForRegistration(std::string& comand, PendingClient* pending) const;
-		
+
 		void dealWIthUser(std::string& buff, User* user);
 		Channel* getChannel(std::string& name, std::string& key);
+		Channel* getChannelName(std::string& delChannel);
+		User* getDelUser(std::string& name);
 };
 
 #endif

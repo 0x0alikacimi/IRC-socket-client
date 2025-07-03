@@ -28,15 +28,16 @@ void PendingClient::handleRegistration(std::string& buff, std::string& password,
 		std::cout << "Unvalid command" << std::endl;
 		return;
 	}
-	std::string command = tokens[0];
-	if (command == "NICK" && !tokens[1].empty()) {
-		handleNickCommand(tokens[1], users);
+	std::string command = parsse(tokens[0]);
+	std::string value = parsse(tokens[1]);
+	if (command == "NICK" && !value.empty()) {
+		handleNickCommand(value, users);
 	}
-	else if (command == "USER" && !tokens[1].empty()) {
-		handleUserCommand(tokens[1], users);
+	else if (command == "USER" && !value.empty()) {
+		handleUserCommand(value, users);
 	}
-	else if (command == "PASS" && !tokens[1].empty()) {
-		handlePassCommand(tokens[1], password);
+	else if (command == "PASS" && !value.empty()) {
+		handlePassCommand(value, password);
 	}
 	else {
 		std::cout << "Unknown command: " << std::endl;
@@ -68,7 +69,7 @@ void PendingClient::handlePassCommand(std::string& password, std::string& truePa
 }
 
 void PendingClient::setUsername(std::string& username){
-	this->username = username;
+	this->username = parsse(username);
 }
 
 void PendingClient::setNickname(std::string& nickname){
@@ -98,11 +99,11 @@ bool PendingClient::isPasswordSet() const{
 }
 
 bool PendingClient::checkPassword(std::string& password, std::string& truePassword) const{
-	if (!password.empty() && password.back() == '\n') {
-    	password.erase(password.size() - 1);
-	}
-	if (truePassword == password)
+	if (truePassword == password){
+		std::cout << "Password correct" << std::endl;
 		return true;
+	}
+	std::cout << "Password incorrect" << std::endl;
 	return false;
 }
 
@@ -110,9 +111,11 @@ bool PendingClient::checkUsername(std::string& username, std::vector <User> user
 	std::vector<User>::const_iterator it = users.begin();
     for (; it != users.end(); ++it) {
         if (it->getUsername() == username) {
+			std::cout << "The username " << username << " is already in use" << std::endl;
             return false;
         }
     }
+	std::cout << "Username set successfully" << std::endl;
     return true;
 }
 
@@ -120,29 +123,12 @@ bool PendingClient::checkNickname(std::string& nickname, std::vector <User> user
 	std::vector<User>::const_iterator it = users.begin();
     for (; it != users.end(); ++it) {
         if (it->getNickname() == nickname) {
+			std::cout << "The nickname " << nickname << " is already in use" << std::endl;
             return false;
         }
     }
+	std::cout << "Nickname set successfully" << std::endl;
     return true;
-}
-
-std::vector<std::string> splitBySpace(const std::string& input) {
-	std::vector<std::string> tokens;
-	std::string token;
-	for (size_t i = 0; i < input.length(); ++i) {
-		if (input[i] == ' ') {
-			if (!token.empty()) {
-				tokens.push_back(token);
-				token.clear();
-			}
-		} else {
-			token += input[i];
-		}
-	}
-	if (!token.empty()) {
-		tokens.push_back(token);
-	}
-	return tokens;
 }
 
 int PendingClient::get_fd() const
@@ -179,4 +165,30 @@ bool PendingClient::get_nickname_valid()const{
 }
 bool PendingClient::get_password_valid()const{
 	return password_valid;
+}
+
+std::string parsse(std::string& std){
+	if (!std.empty() && std.back() == '\n') {
+    	std.erase(std.size() - 1);
+	}
+	return std;
+}
+
+std::vector<std::string> splitBySpace(const std::string& input) {
+	std::vector<std::string> tokens;
+	std::string token;
+	for (size_t i = 0; i < input.length(); ++i) {
+		if (input[i] == ' ') {
+			if (!token.empty()) {
+				tokens.push_back(token);
+				token.clear();
+			}
+		} else {
+			token += input[i];
+		}
+	}
+	if (!token.empty()) {
+		tokens.push_back(token);
+	}
+	return tokens;
 }
