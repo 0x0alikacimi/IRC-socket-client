@@ -22,7 +22,7 @@ class User
 		std::string nickname;
 		int user_fd;
 	public :
-		User(int fd);
+		User(int fd, std::string username, std::string nickname);
 		int get_fd() const;
 		std::string getUsername() const;
 		std::string getNickname() const;

@@ -14,6 +14,6 @@ std::string User::getUsername() const{
 	return username;
 }
 
-
-User::User(int fd) : user_fd(fd) {
+User::User(int fd, std::string username, std::string nickname) : user_fd(fd) , username(username), nickname(nickname){
 }
+

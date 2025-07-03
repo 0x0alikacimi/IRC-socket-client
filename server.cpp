@@ -62,7 +62,7 @@ void Server::start_server()
 						if (isReadyForRegistration((std::string&)buff, pending))
 						{
 							std::cout << "Client registered successfully" << std::endl;
-							User new_user(pending->get_fd());
+							User new_user(pending->get_fd(), pending->getUsername(), pending->getNickname());
 							// set the user's nickname and username from pending
 							users.push_back(new_user);
 							remove_pending_client(pending->get_fd());
@@ -73,7 +73,7 @@ void Server::start_server()
 						/*deal with user*/
 						dealWIthUser((std::string&)buff, user);
 					}
-					buff[n] = '\0';
+					
 					std::cout << "received form " << i << ": " << buff << std::endl;
 				}
 			}
