@@ -24,8 +24,8 @@ bool Server::isReadyForRegistration(std::string& buff, PendingClient* pending) c
 
 void PendingClient::handleRegistration(std::string& buff, std::string& password, std::vector <User> users){
 	std::vector<std::string> tokens = splitBySpace(buff);
-	if (tokens.empty()) {
-		std::cout << "Empty command" << std::endl;
+	if (tokens.empty() || tokens.size() != 2) {
+		std::cout << "Unvalid command" << std::endl;
 		return;
 	}
 	std::string command = tokens[0];

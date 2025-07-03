@@ -59,8 +59,8 @@ void Server::start_server()
 					if (pending)
 					{
 						/*deal with pending*/
-						std::string tmp = buff;
-						if (isReadyForRegistration(tmp, pending))
+						std::string save1 = buff;
+						if (isReadyForRegistration(save1, pending))
 						{
 							std::cout << "Client registered successfully" << std::endl;
 							User new_user(pending->get_fd(), pending->getUsername(), pending->getNickname());
@@ -72,10 +72,11 @@ void Server::start_server()
 					else if (user)
 					{
 						/*deal with user*/
-						dealWIthUser((std::string&)buff, user);
+						std::string save2 = buff;
+						dealWIthUser(save2, user);
 					}
 
-					std::cout << "received form " << i << ": " << buff << std::endl;
+					// std::cout << "received form " << i << ": " << buff << std::endl;
 				}
 			}
 			i++;
@@ -117,15 +118,21 @@ Channel* Server::getChannel(std::string& name, std::string& key){
 
 void Server::dealWIthUser(std::string& buff, User* user){
 	std::vector<std::string> tokens = splitBySpace(buff);
-	if (tokens.empty()) {
-		std::cout << "Empty command" << std::endl;
+	if (tokens.empty() || tokens.size() < 2 || tokens.size() > 3) {
+		std::cout << "Unvalid command" << std::endl;
 		return;
 	}
 	std::string command = tokens[0];
-	if (command == "JOIN"){
+	if (command == "JOIN" && !tokens[1].empty()){
 		std::string name = tokens[1];
-		std::string key = tokens[2];
+		std::string key = "";
+		if (tokens.size() == 3 && !tokens[2].empty())
+			key = tokens[2];
 		Channel* channel = getChannel(name, key);
 		channel->handleJoinCommand(user, key);
+	}
+	else {
+		std::cout << "Unknown command" << std::endl;
+		return;
 	}
 }

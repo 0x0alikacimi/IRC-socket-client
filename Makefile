@@ -7,7 +7,7 @@ HEADERS = server.hpp user.hpp pendingClient.cpp channel.hpp
 
 CC = c++
 # CC = g++-15 #for linux
-CFLAGS = #-Wall -Wextra -Werror -std=c++98
+CFLAGS = -fsanitize=address -g #-Wall -Wextra -Werror -std=c++98
 
 all : $(NAME)
 
