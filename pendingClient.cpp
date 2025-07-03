@@ -29,17 +29,17 @@ void PendingClient::handleRegistration(std::string& buff, std::string& password,
 		return;
 	}
 	std::string command = tokens[0];
-	if (command == "NICK") {
+	if (command == "NICK" && !tokens[1].empty()) {
 		handleNickCommand(tokens[1], users);
 	}
-	else if (command == "USER") {
+	else if (command == "USER" && !tokens[1].empty()) {
 		handleUserCommand(tokens[1], users);
 	}
-	else if (command == "PASS") {
+	else if (command == "PASS" && !tokens[1].empty()) {
 		handlePassCommand(tokens[1], password);
 	}
 	else {
-		std::cout << "Unknown command: " << command << std::endl;
+		std::cout << "Unknown command: " << std::endl;
 	}
 }
 
@@ -98,6 +98,9 @@ bool PendingClient::isPasswordSet() const{
 }
 
 bool PendingClient::checkPassword(std::string& password, std::string& truePassword) const{
+	if (!password.empty() && password.back() == '\n') {
+    	password.erase(password.size() - 1);
+	}
 	if (truePassword == password)
 		return true;
 	return false;
