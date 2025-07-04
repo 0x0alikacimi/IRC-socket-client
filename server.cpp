@@ -146,6 +146,9 @@ void Server::dealWIthUser(std::string& buff, User* user){
 			return ;
 		channel->handleKickCommand(user, delUser, delComment);
 	}
+	else if (command == "PRIVMSG"){
+		// handlePrivateMessage(tokens, users);
+	}
 	else {
 		std::cout << "Unknown/Unvalid command" << std::endl;
 		return;
