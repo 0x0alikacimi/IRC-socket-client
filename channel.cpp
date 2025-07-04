@@ -1,5 +1,7 @@
 #include "channel.hpp"
 #include "user.hpp"
+#include "replies.hpp"
+#include "pendingClient.hpp"
 
 Channel::Channel(const std::string& name, const std::string& key) : name(name) , key(key), topic(""){
 }
@@ -31,13 +33,15 @@ bool Channel::isUserInChannel(int user_fd) const{
     return std::find(users_fd.begin(), users_fd.end(), user_fd) != users_fd.end();
 }
 
-bool Channel::addUser(int user_fd, const std::string& key){
+bool Channel::addUser(int user_fd, const std::string& key, const std::string& username){
     if (isUserInChannel(user_fd)){
-		std::cout << "User already in Channel : " << name << std::endl;
+		// std::cout << "User already in Channel : " << name << std::endl;
+		sendReply(user_fd, ERR_ALREADYREGISTRED(username));
         return false;
 	}
 	if (hasKey() && !checkKey(key)){
-		std::cout << "Key incorrect" << std::endl;
+		// std::cout << "Key incorrect" << std::endl;
+		sendReply(user_fd, ERR_BADCHANNELKEY(username, name));
         return false;
 	}
     users_fd.push_back(user_fd);
@@ -80,13 +84,14 @@ void Channel::invite(int user_fd){
 }
 
 void Channel::handleJoinCommand(User* user, std::string& key){
-	if (addUser(user->get_fd(), key))
+	if (addUser(user->get_fd(), key, user->getUsername()))
 		addOperator(user->get_fd());
 }
 
 void Channel::handleKickCommand(User* user, User* delUser, std::string& delComment){
 	if (!isUserInChannel(user->get_fd())){
 		std::cout << "The User : " << user->getUsername() << " is NOT Allowed to KICK from this channel" << std::endl;
+		// sendReply(user_fd, ERR_ALREADYREGISTRED(user->getUsername()));
 		return ;
 	}
 	if (!isOperator(user->get_fd())){

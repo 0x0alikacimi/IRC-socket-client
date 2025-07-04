@@ -1,5 +1,6 @@
 #include "pendingClient.hpp"
 #include "server.hpp"
+#include "replies.hpp"
 
 PendingClient::PendingClient(int fd){
 	this->user_fd = fd;
@@ -16,13 +17,13 @@ PendingClient::PendingClient(int fd){
 
 bool Server::isReadyForRegistration(std::string& buff, PendingClient* pending) const{
 	std::string pwd = password;
-	pending->handleRegistration(buff, pwd, users);
+	pending->handleRegistration(buff, pwd, users, pending_users);
 	if (pending->get_username_set() && pending->get_nickname_set() && pending->get_password_set() && pending->get_username_valid() && pending->get_nickname_valid() && pending->get_password_valid())
 		return true;
 	return false;
 }
 
-void PendingClient::handleRegistration(std::string& buff, std::string& password, std::vector <User> users){
+void PendingClient::handleRegistration(std::string& buff, std::string& password, std::vector <User> users, std::vector <PendingClient> pendingUsers){
 	std::vector<std::string> tokens = splitBySpace(buff);
 	if (tokens.empty() || tokens.size() != 2) {
 		std::cout << "Unvalid command" << std::endl;
@@ -31,10 +32,10 @@ void PendingClient::handleRegistration(std::string& buff, std::string& password,
 	std::string command = parsse(tokens[0]);
 	std::string value = parsse(tokens[1]);
 	if (command == "NICK" && !value.empty()) {
-		handleNickCommand(value, users);
+		handleNickCommand(value, users, pendingUsers);
 	}
 	else if (command == "USER" && !value.empty()) {
-		handleUserCommand(value, users);
+		handleUserCommand(value, users, pendingUsers);
 	}
 	else if (command == "PASS" && !value.empty()) {
 		handlePassCommand(value, password);
@@ -44,19 +45,19 @@ void PendingClient::handleRegistration(std::string& buff, std::string& password,
 	}
 }
 
-void PendingClient::handleUserCommand(std::string& username, std::vector <User> users){
+void PendingClient::handleUserCommand(std::string& username, std::vector <User> users, std::vector <PendingClient> pendingUsers){
 	setUsername(username);
 	if (isUsernameSet())
 		this->username_set = true;
-	if (checkUsername(username, users))
+	if (checkUsername(username, users, pendingUsers))
 		this->username_valid = true;
 }
 
-void PendingClient::handleNickCommand(std::string& nickname, std::vector <User> users){
+void PendingClient::handleNickCommand(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers){
 	setNickname(nickname);
 	if (isNicknameSet())
 		this->nickname_set = true;
-	if (checkNickname(nickname, users))
+	if (checkNickname(nickname, users, pendingUsers))
 		this->nickname_valid = true;
 }
 
@@ -66,18 +67,6 @@ void PendingClient::handlePassCommand(std::string& password, std::string& truePa
 		this->password_set = true;
 	if (checkPassword(password, truePassword))
 		this->password_valid = true;
-}
-
-void PendingClient::setUsername(std::string& username){
-	this->username = parsse(username);
-}
-
-void PendingClient::setNickname(std::string& nickname){
-	this->nickname = nickname;
-}
-
-void PendingClient::setPassword(std::string& password){
-	this->password = password;
 }
 
 bool PendingClient::isUsernameSet() const{
@@ -100,17 +89,25 @@ bool PendingClient::isPasswordSet() const{
 
 bool PendingClient::checkPassword(std::string& password, std::string& truePassword) const{
 	if (truePassword == password){
-		std::cout << "Password correct" << std::endl;
+		// std::cout << "Password correct" << std::endl;
 		return true;
 	}
-	std::cout << "Password incorrect" << std::endl;
+	// std::cout << "Password incorrect" << std::endl;
+	sendReply(user_fd, ERR_PASSWDMISMATCH(password));
 	return false;
 }
 
-bool PendingClient::checkUsername(std::string& username, std::vector <User> users) const{
+bool PendingClient::checkUsername(std::string& username, std::vector <User> users, std::vector <PendingClient> pendingUsers) const{
 	std::vector<User>::const_iterator it = users.begin();
     for (; it != users.end(); ++it) {
         if (it->getUsername() == username) {
+			std::cout << "The username " << username << " is already in use" << std::endl;
+            return false;
+        }
+    }
+	std::vector<PendingClient>::const_iterator itt = pendingUsers.begin();
+    for (; itt != pendingUsers.end(); ++itt) {
+        if (itt->getUsername() == username) {
 			std::cout << "The username " << username << " is already in use" << std::endl;
             return false;
         }
@@ -119,10 +116,17 @@ bool PendingClient::checkUsername(std::string& username, std::vector <User> user
     return true;
 }
 
-bool PendingClient::checkNickname(std::string& nickname, std::vector <User> users) const{
+bool PendingClient::checkNickname(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers) const{
 	std::vector<User>::const_iterator it = users.begin();
     for (; it != users.end(); ++it) {
         if (it->getNickname() == nickname) {
+			std::cout << "The nickname " << nickname << " is already in use" << std::endl;
+            return false;
+        }
+    }
+	std::vector<PendingClient>::const_iterator itt = pendingUsers.begin();
+    for (; itt != pendingUsers.end(); ++itt) {
+        if (itt->getNickname() == nickname) {
 			std::cout << "The nickname " << nickname << " is already in use" << std::endl;
             return false;
         }
@@ -136,16 +140,52 @@ int PendingClient::get_fd() const
 	return user_fd;
 }
 
-std::string PendingClient::getNickname() const{
+const std::string PendingClient::getNickname() const{
 	return nickname;
 }
 
-std::string PendingClient::getUsername() const{
+const std::string PendingClient::getUsername() const{
 	return username;
 }
 
-std::string PendingClient::getPassword() const{
+const std::string PendingClient::getHostname() const{
+	return hostname;
+}
+
+const std::string PendingClient::getServername() const{
+	return servername;
+}
+
+const std::string PendingClient::getRealname() const{
+	return realname;
+}
+
+const std::string PendingClient::getPassword() const{
 	return password;
+}
+
+void PendingClient::setUsername(std::string& username){
+	this->username = parsse(username);
+}
+
+void PendingClient::setNickname(std::string& nickname){
+	this->nickname = parsse(nickname);
+}
+
+void PendingClient::setHostname(std::string& hostname){
+	this->hostname = parsse(hostname);
+}
+
+void PendingClient::setServername(std::string& servername){
+	this->servername = parsse(servername);
+}
+
+void PendingClient::setRealname(std::string& realname){
+	this->realname = realname;
+}
+
+void PendingClient::setPassword(std::string& password){
+	this->password = password;
 }
 
 bool PendingClient::get_username_set()const{
@@ -191,4 +231,8 @@ std::vector<std::string> splitBySpace(const std::string& input) {
 		tokens.push_back(token);
 	}
 	return tokens;
+}
+
+void sendReply(int fd, std::string reply) {
+    send(fd, reply.c_str(), strlen(reply.c_str()), 0);
 }

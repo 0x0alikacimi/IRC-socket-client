@@ -20,13 +20,25 @@ class User
 {
 	private :
 		std::string username;
+		std::string hostname;
+		std::string servername;
+		std::string realname;
 		std::string nickname;
 		int user_fd;
 	public :
-		User(int fd, std::string username, std::string nickname);
+		User(int fd, std::string username, std::string hostname, std::string servername, std::string realname, std::string nickname);
 		int get_fd() const;
-		std::string getUsername() const;
-		std::string getNickname() const;
+		const std::string getUsername() const;
+		const std::string getHostname() const;
+		const std::string getServername() const;
+		const std::string getRealname() const;
+		const std::string getNickname() const;
+
+		void setUsername(std::string& username);
+		void setHostname(std::string& username);
+		void setServername(std::string& username);
+		void setRealname(std::string& username);
+		void setNickname(std::string& nickname);
 };
 
 #endif

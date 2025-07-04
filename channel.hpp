@@ -21,7 +21,7 @@ class Channel{
 
         void setTopic(const std::string& topic);
 
-        bool addUser(int users_fd, const std::string& key);
+        bool addUser(int users_fd, const std::string& key, const std::string& username);
         void removeUser(int users_fd);
         bool isUserInChannel(int users_fd) const;
         void addOperator(int users_fd);

@@ -5,8 +5,11 @@
 
 class PendingClient{
 	private:
-		std::string nickname;
 		std::string username;
+		std::string hostname;
+		std::string servername;
+		std::string realname;
+		std::string nickname;
 		std::string password;
 		int user_fd;
 
@@ -21,11 +24,14 @@ class PendingClient{
 	public:
 		PendingClient(int fd);
 
-		int get_fd() const;
-		std::string getNickname() const;
-		std::string getUsername() const;
-		std::string getPassword() const;
+		const std::string getUsername() const;
+		const std::string getHostname() const;
+		const std::string getServername() const;
+		const std::string getRealname() const;
+		const std::string getNickname() const;
+		const std::string getPassword() const;
 
+		int get_fd() const;
 		bool get_username_set() const;
 		bool get_nickname_set() const;
 		bool get_password_set() const;
@@ -33,8 +39,11 @@ class PendingClient{
 		bool get_nickname_valid() const;
 		bool get_password_valid() const;
 
-		void setNickname(std::string& nickname);
 		void setUsername(std::string& username);
+		void setHostname(std::string& username);
+		void setServername(std::string& username);
+		void setRealname(std::string& username);
+		void setNickname(std::string& nickname);
 		void setPassword(std::string& password);
 
 		bool isNicknameSet() const;
@@ -42,17 +51,18 @@ class PendingClient{
 		bool isPasswordSet() const;
 
 		bool checkPassword(std::string& password, std::string& truePassword) const;
-		bool checkUsername(std::string& username, std::vector <User> users) const;
-		bool checkNickname(std::string& nickname, std::vector <User> users) const;
+		bool checkUsername(std::string& username, std::vector <User> users, std::vector <PendingClient> pendingUsers) const;
+		bool checkNickname(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers) const;
 
-		void handleRegistration(std::string& buff, std::string& password, std::vector <User> users);
-		void handleUserCommand(std::string& username, std::vector <User> users);
-		void handleNickCommand(std::string& nickname, std::vector <User> users);
+		void handleRegistration(std::string& buff, std::string& password, std::vector <User> users, std::vector <PendingClient> pendingUsers);
+		void handleUserCommand(std::string& username, std::vector <User> users, std::vector <PendingClient> pendingUsers);
+		void handleNickCommand(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers);
 		void handlePassCommand(std::string& password, std::string& truePassword);
 
 	};
 
 	std::vector<std::string> splitBySpace(const std::string& input);
 	std::string parsse(std::string& std);
+	void sendReply(int fd, std::string reply);
 
 #endif

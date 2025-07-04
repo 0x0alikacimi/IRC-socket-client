@@ -1,4 +1,5 @@
 #include "server.hpp"
+#include "replies.hpp"
 
 void Server::start_server()
 {
@@ -62,9 +63,9 @@ void Server::start_server()
 						std::string save1 = buff;
 						if (isReadyForRegistration(save1, pending))
 						{
-							std::cout << "Client registered successfully" << std::endl;
-							User new_user(pending->get_fd(), pending->getUsername(), pending->getNickname());
-							// set the user's nickname and username from pending
+							std::string msg = "Welcome to the Internet Relay Network " + pending->getNickname() + "!" + pending->getUsername() + "@" + pending->getUsername();
+							sendReply(pending->get_fd(), RPL_WELCOME(pending->getUsername(), msg));
+							User new_user(pending->get_fd(), pending->getUsername(), pending->getHostname(), pending->getServername(), pending->getRealname(), pending->getNickname());
 							users.push_back(new_user);
 							remove_pending_client(pending->get_fd());
 						}
@@ -122,21 +123,21 @@ void Server::dealWIthUser(std::string& buff, User* user){
 		std::cout << "empty command" << std::endl;
 		return;
 	}
-	std::string command = parsse(tokens[0]);
+	std::string command = tokens[0];
 	if (command == "JOIN" && tokens.size() >= 2 && tokens.size() <= 3){
-		std::string name = parsse(tokens[1]);
+		std::string name = tokens[1];
 		std::string key = "";
 		if (tokens.size() == 3)
-			key = parsse(tokens[2]);
+			key = tokens[2];
 		Channel* channel = getChannel(name, key);
 		channel->handleJoinCommand(user, key);
 	}
 	else if (command == "KICK" && tokens.size() >= 3 && tokens.size() <= 4){
-		std::string channelName = parsse(tokens[1]);
-		std::string name = parsse(tokens[2]);
+		std::string channelName = tokens[1];
+		std::string name = tokens[2];
 		std::string delComment = "";
 		if (tokens.size() == 4)
-			delComment = parsse(tokens[3]);
+			delComment = tokens[3];
 		Channel* channel = getChannelName(channelName);
 		if (!channel)
 			return ;
