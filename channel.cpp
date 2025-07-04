@@ -33,35 +33,6 @@ bool Channel::isUserInChannel(int user_fd) const{
     return std::find(users_fd.begin(), users_fd.end(), user_fd) != users_fd.end();
 }
 
-bool Channel::addUser(int user_fd, const std::string& key, const std::string& username){
-    if (isUserInChannel(user_fd)){
-		// std::cout << "User already in Channel : " << name << std::endl;
-		sendReply(user_fd, ERR_ALREADYREGISTRED(username));
-        return false;
-	}
-	if (hasKey() && !checkKey(key)){
-		// std::cout << "Key incorrect" << std::endl;
-		sendReply(user_fd, ERR_BADCHANNELKEY(username, name));
-        return false;
-	}
-    users_fd.push_back(user_fd);
-	std::cout << "The user added successfully to Channel : " << name << std::endl;
-	return true;
-}
-
-void Channel::removeUser(int user_fd) {
-    std::vector<int>::iterator user_vector;
-    user_vector = std::find(users_fd.begin(), users_fd.end(), user_fd);
-    if (user_vector != users_fd.end())
-        users_fd.erase(user_vector);
-    user_vector = std::find(operators_fd.begin(), operators_fd.end(), user_fd);
-    if (user_vector != operators_fd.end())
-        operators_fd.erase(user_vector);
-    user_vector = std::find(inviteds_fd.begin(), inviteds_fd.end(), user_fd);
-    if (user_vector != inviteds_fd.end())
-        inviteds_fd.erase(user_vector);
-}
-
 bool Channel::isOperator(int user_fd) const{
     return std::find(operators_fd.begin(), operators_fd.end(), user_fd) != users_fd.end();
 }
@@ -81,31 +52,4 @@ bool Channel::isInvited(int user_fd) const{
 void Channel::invite(int user_fd){
     if (!isInvited(user_fd))
         inviteds_fd.push_back(user_fd);
-}
-
-void Channel::handleJoinCommand(User* user, std::string& key){
-	if (addUser(user->get_fd(), key, user->getUsername()))
-		addOperator(user->get_fd());
-}
-
-void Channel::handleKickCommand(User* user, User* delUser, std::string& delComment){
-	if (!isUserInChannel(user->get_fd())){
-		std::cout << "The User : " << user->getUsername() << " is NOT Allowed to KICK from this channel" << std::endl;
-		// sendReply(user_fd, ERR_ALREADYREGISTRED(user->getUsername()));
-		return ;
-	}
-	if (!isOperator(user->get_fd())){
-		std::cout << "The User : " << user->getUsername() << " is not an operator " << std::endl;
-		return ;
-	}
-	if (!isUserInChannel(delUser->get_fd())){
-		std::cout << "The User : " << delUser->getUsername() << " is not in channel" << std::endl;
-		return ;
-	}
-	removeUser(delUser->get_fd());
-	std::cout << "The User : " << delUser->getUsername() << " has been removed successfully " ;
-	if (!delComment.empty())
-		std::cout << "Because : " << delComment << std::endl;
-	else
-		std::cout << std::endl;
 }

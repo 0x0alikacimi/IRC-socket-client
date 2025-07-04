@@ -1,6 +1,6 @@
 NAME = ircserv
 
-SRC_FILES = user.cpp helpers.cpp main.cpp pendingClient.cpp server.cpp channel.cpp
+SRC_FILES = user.cpp helpers.cpp main.cpp pendingClient.cpp server.cpp channel.cpp join.cpp kick.cpp authetification.cpp 
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 
 HEADERS = server.hpp user.hpp pendingClient.cpp channel.hpp
