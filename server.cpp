@@ -133,21 +133,26 @@ void Server::dealWIthUser(std::string& buff, User* user){
 		channel->handleJoinCommand(user, key);
 	}
 	else if (command == "KICK" && tokens.size() >= 3 && tokens.size() <= 4){
-		std::string channelName = tokens[1];
-		std::string name = tokens[2];
+		std::string channelName = parsse(tokens[1]);
+		std::string name = parsse(tokens[2]);
+		std::cout << "(" << channelName << ")" << std::endl;
 		std::string delComment = "";
 		if (tokens.size() == 4)
-			delComment = tokens[3];
+			delComment = parsse(tokens[3]);
 		Channel* channel = getChannelName(channelName);
-		if (!channel)
+		if (!channel){
+			sendReply(user->get_fd() ,ERR_NOSUCHCHANNEL(channelName));
 			return ;
+		}
 		User* delUser = getDelUser(name);
-		if (!delUser)
+		if (!delUser){
+			sendReply(user->get_fd() ,ERR_NOSUCHNICK(user->getNickname()));
 			return ;
+		}
 		channel->handleKickCommand(user, delUser, delComment);
 	}
 	else if (command == "PRIVMSG"){
-		handlePrivateMessage(tokens, users, user);
+		// handlePrivateMessage(tokens, users, user);
 	}
 	else if ((command == "USER" || command == "NICK" || command == "PASS") && tokens.size() == 2){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
@@ -172,7 +177,7 @@ Channel* Server::getChannelName(std::string& delChannel){
 User* Server::getDelUser(std::string& name){
 	std::vector <User>::iterator it = users.begin();
 	for (; it != users.end(); ++it)
-		if (it->getUsername() == name)
+		if (it->getNickname() == name)
 			return &(*it);
 	std::cout << "The User : " << name << " does not exist in the server " << std::endl;
 	return NULL;

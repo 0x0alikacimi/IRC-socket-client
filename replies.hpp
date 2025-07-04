@@ -13,8 +13,8 @@
 #define ERR_CHANOPRIVSNEEDED(channel)					PREFIX "482 " + channel + " :You're not channel operator" POSTFIX //
 #define ERR_ERRONEUSNICKNAME(nick)						PREFIX "432 " + nick + " :Erroneus nickname" POSTFIX
 #define ERR_NOTEXTTOSEND()								PREFIX "412 :No text to send" POSTFIX
-#define ERR_NOSUCHCHANNEL(channel)						PREFIX "403 " + channel + " :No such channel" POSTFIX
-#define ERR_NOSUCHNICK(nick)							PREFIX "401 " + nick + " :No such nick/channel" POSTFIX
+#define ERR_NOSUCHCHANNEL(channel)						PREFIX "403 " + channel + " :No such channel" POSTFIX //
+#define ERR_NOSUCHNICK(nick)							PREFIX "401 " + nick + " :No such nick/channel" POSTFIX //
 #define ERR_NOTONCHANNEL(target, channel)	   			PREFIX "442 " + target + " " + channel + " :You're not on that channel" POSTFIX //
 #define ERR_USERNOTINCHANNEL(user, channel) 			PREFIX "441 " + user + " " + channel + " :They aren't on that channel" POSTFIX //
 #define ERR_NONICKNAMEGIVEN(target)           			PREFIX "431 " + target + " :No nickname given" POSTFIX
