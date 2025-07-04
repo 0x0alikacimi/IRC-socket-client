@@ -54,6 +54,9 @@ void PendingClient::handleRegistration(std::string& buff, std::string& password,
 		else
 			sendReply(user_fd, ERR_NEEDMOREPARAMS(buff));
 	}
+	else if (command == "PRIVMSG"){
+		// handlePrivateMessage(tokens, users);
+	}
 	else {
 		// std::cout << "Unknown command: " << std::endl;
 		sendReply(user_fd, ERR_UNKNOWNCOMMAND(buff));
