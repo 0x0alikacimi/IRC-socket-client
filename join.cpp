@@ -4,20 +4,24 @@
 #include "pendingClient.hpp"
 
 void Channel::handleJoinCommand(User* user, std::string& key){
-	if (addUser(user->get_fd(), key, user->getUsername()))
-		addOperator(user->get_fd());
+	addUser(user, key);
 }
 
-bool Channel::addUser(int user_fd, const std::string& key, const std::string& username){
-    if (isUserInChannel(user_fd)){
-		sendReply(user_fd, ERR_ALREADYREGISTRED(username));
-        return false;
+void Channel::addUser(User* user, const std::string& key){
+    if (isUserInChannel(user->get_fd())){
+		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getUsername()));
+        return ;
 	}
 	if (hasKey() && !checkKey(key)){
-		sendReply(user_fd, ERR_BADCHANNELKEY(username, name));
-        return false;
+		sendReply(user->get_fd(), ERR_BADCHANNELKEY(user->getUsername(), name));
+        return ;
 	}
-    users_fd.push_back(user_fd);
-	std::cout << "The user added successfully to Channel : " << name << std::endl;
-	return true;
+    users_fd.push_back(user->get_fd());
+	sendReply(user->get_fd(), RPL_JOIN(user->getUsername(), name));
+	sendReply(user->get_fd(), RPL_TOPIC(user->getUsername(), name, topic));
+	sendReply(user->get_fd(), RPL_JOINMSG(user->getHostname(), "127.0.0.1", name));
+	if (justCreated){
+		addOperator(user->get_fd());
+		justCreated = false;
+	}
 }

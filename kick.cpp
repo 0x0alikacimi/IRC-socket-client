@@ -18,22 +18,17 @@ void Channel::removeUser(int user_fd) {
 
 void Channel::handleKickCommand(User* user, User* delUser, std::string& delComment){
 	if (!isUserInChannel(user->get_fd())){
-		std::cout << "The User : " << user->getUsername() << " is NOT Allowed to KICK from this channel" << std::endl;
-		// sendReply(user_fd, ERR_ALREADYREGISTRED(user->getUsername()));
+		sendReply(user->get_fd(), ERR_NOTONCHANNEL(user->getNickname(), name));
 		return ;
 	}
 	if (!isOperator(user->get_fd())){
-		std::cout << "The User : " << user->getUsername() << " is not an operator " << std::endl;
+		sendReply(user->get_fd(), ERR_CHANOPRIVSNEEDED(name));
 		return ;
 	}
 	if (!isUserInChannel(delUser->get_fd())){
-		std::cout << "The User : " << delUser->getUsername() << " is not in channel" << std::endl;
+		sendReply(user->get_fd(), ERR_NOTONCHANNEL(user->getNickname(), name));
 		return ;
 	}
 	removeUser(delUser->get_fd());
-	std::cout << "The User : " << delUser->getUsername() << " has been removed successfully " ;
-	if (!delComment.empty())
-		std::cout << "Because : " << delComment << std::endl;
-	else
-		std::cout << std::endl;
+	sendReply(user->get_fd(), RPL_KICK(user->getNickname(), name, delUser->getNickname(), delComment));
 }

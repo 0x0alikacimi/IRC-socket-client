@@ -8,6 +8,7 @@ class Channel{
         std::string name;
         std::string key;
         std::string topic;
+		bool justCreated;
         std::vector <int> users_fd;
         std::vector <int> inviteds_fd;
         std::vector <int> operators_fd;
@@ -21,7 +22,7 @@ class Channel{
 
         void setTopic(const std::string& topic);
 
-        bool addUser(int users_fd, const std::string& key, const std::string& username);
+        void addUser(User* user, const std::string& key);
         void removeUser(int users_fd);
         bool isUserInChannel(int users_fd) const;
         void addOperator(int users_fd);

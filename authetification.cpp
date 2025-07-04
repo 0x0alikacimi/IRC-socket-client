@@ -12,25 +12,23 @@ bool Server::isReadyForRegistration(std::string& buff, PendingClient* pending) c
 
 void PendingClient::handleRegistration(std::string& buff, std::string& password, std::vector <User> users, std::vector <PendingClient> pendingUsers){
 	std::vector<std::string> tokens = splitBySpace(buff);
-	if (tokens.empty() && tokens.size() < 2){
-		// std::cout << "Empty command" << std::endl;
+	if (tokens.empty())
 		return;
-	}
 	std::string command = parsse(tokens[0]);
-	std::string value = parsse(tokens[1]);
-	if (command == "NICK" && tokens.size() <= 2) {
-		if (tokens.size() == 2){
-			std::string value = parsse(tokens[1]);
-			handleNickCommand(value, users, pendingUsers);
-		}
-		else
-			sendReply(user_fd, ERR_NEEDMOREPARAMS(buff));
+	if (command != "NICK" && command != "PASS" && command != "USER"){
+		sendReply(user_fd, ERR_UNKNOWNCOMMAND(buff));
+		return ;
 	}
-	else if (command == "PASS" && tokens.size() <= 2) {
-		if (tokens.size() == 2)
-			handlePassCommand(value, password);
-		else
-			sendReply(user_fd, ERR_NEEDMOREPARAMS(buff));
+	if (tokens.size() < 2){
+		sendReply(user_fd, ERR_NEEDMOREPARAMS(buff));
+		return ;
+	}
+	std::string value = parsse(tokens[1]);
+	if (command == "NICK" && tokens.size() == 2) {
+		handleNickCommand(value, users, pendingUsers);
+	}
+	else if (command == "PASS" && tokens.size() == 2) {
+		handlePassCommand(value, password);
 	}
 	else if (command == "USER" && tokens.size() <= 5) {
 		if (tokens.size() == 5){
@@ -42,8 +40,10 @@ void PendingClient::handleRegistration(std::string& buff, std::string& password,
 		else
 			sendReply(user_fd, ERR_NEEDMOREPARAMS(buff));
 	}
+	else if (command == "JOIN" || command == "KICK" || command == "PRIVMSG" || command == "MODE" || command == "TOPIC" || command == "INVITE"){
+		sendReply(user_fd, ERR_NOTREGISTERED);
+	}
 	else {
-		// std::cout << "Unknown command: " << std::endl;
 		sendReply(user_fd, ERR_UNKNOWNCOMMAND(buff));
 	}
 }

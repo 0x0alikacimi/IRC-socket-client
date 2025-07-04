@@ -3,7 +3,7 @@
 #include "replies.hpp"
 #include "pendingClient.hpp"
 
-Channel::Channel(const std::string& name, const std::string& key) : name(name) , key(key), topic(""){
+Channel::Channel(const std::string& name, const std::string& key) : name(name) , key(key), topic(""), justCreated(true){
 }
 
 const std::string& Channel::getName() const{
@@ -39,7 +39,6 @@ bool Channel::isOperator(int user_fd) const{
 
 void Channel::addOperator(int user_fd){
     if (!isOperator(user_fd)){
-		std::cout << "The user " << user_fd << " is an Operator now in the Channel " << name << std::endl;
         operators_fd.push_back(user_fd);
 		return ;
 	}

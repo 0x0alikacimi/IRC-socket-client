@@ -134,15 +134,11 @@ bool PendingClient::isPasswordSet() const{
 
 bool PendingClient::checkPassword(std::string& password, std::string& truePassword) const{
 	if (truePassword == parsse(password)){
-		std::cout << "Password correct" << std::endl;
 		return true;
 	}
-	std::cout << "(" << password << ")" << std::endl;
-	std::cout << "Password incorrect" << std::endl;
 	sendReply(user_fd, ERR_PASSWDMISMATCH(password));
 	return false;
 }
-
 
 bool PendingClient::checkNickname(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers) const{
 	std::vector<User>::const_iterator it = users.begin();

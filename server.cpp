@@ -147,11 +147,16 @@ void Server::dealWIthUser(std::string& buff, User* user){
 		channel->handleKickCommand(user, delUser, delComment);
 	}
 	else if (command == "PRIVMSG"){
-		// handlePrivateMessage(tokens, users);
+		handlePrivateMessage(tokens, users, user);
+	}
+	else if ((command == "USER" || command == "NICK" || command == "PASS") && tokens.size() == 2){
+		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
+	}
+	else if (command == "USER" && tokens.size() == 2){
+		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
 	}
 	else {
 		std::cout << "Unknown/Unvalid command" << std::endl;
-		return;
 	}
 }
 
