@@ -90,6 +90,8 @@ Server::Server(int port, std::string password) : port(port), password(password)
 {
 	server_fd = socket(AF_INET, SOCK_STREAM, DEF_PROTOCOL);
 
+	int opt = 1;
+	setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 	fcntl(server_fd, F_SETFL, O_NONBLOCK);
 
 	sockaddr_in serv_add;
