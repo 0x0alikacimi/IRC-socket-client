@@ -119,6 +119,24 @@ Channel* Server::getChannel(std::string& name, std::string& key){
 	return &channels.back();
 }
 
+Channel* Server::getChannelName(std::string& delChannel){
+	if (channels.empty())
+		return NULL;
+	std::vector <Channel>::iterator it = channels.begin();
+	for (; it != channels.end(); ++it)
+		if (it->getName() == delChannel)
+			return &(*it);
+	return NULL;
+}
+
+User* Server::getDelUser(std::string& name){
+	std::vector <User>::iterator it = users.begin();
+	for (; it != users.end(); ++it)
+		if (it->getNickname() == name)
+			return &(*it);
+	return NULL;
+}
+
 void Server::dealWIthUser(std::string& buff, User* user){
 	std::vector<std::string> tokens = splitBySpace(buff);
 	if (tokens.empty()) {
@@ -127,31 +145,13 @@ void Server::dealWIthUser(std::string& buff, User* user){
 	}
 	std::string command = tokens[0];
 	if (command == "JOIN" && tokens.size() >= 2 && tokens.size() <= 3){
-		std::string name = tokens[1];
-		std::string key = "";
-		if (tokens.size() == 3)
-			key = tokens[2];
-		Channel* channel = getChannel(name, key);
-		channel->handleJoinCommand(user, key);
+		joinCmd(tokens, user);
 	}
 	else if (command == "KICK" && tokens.size() >= 3 && tokens.size() <= 4){
-		std::string channelName = parsse(tokens[1]);
-		std::string name = parsse(tokens[2]);
-		std::cout << "(" << channelName << ")" << std::endl;
-		std::string delComment = "";
-		if (tokens.size() == 4)
-			delComment = parsse(tokens[3]);
-		Channel* channel = getChannelName(channelName);
-		if (!channel){
-			sendReply(user->get_fd() ,ERR_NOSUCHCHANNEL(channelName));
-			return ;
-		}
-		User* delUser = getDelUser(name);
-		if (!delUser){
-			sendReply(user->get_fd() ,ERR_NOSUCHNICK(user->getNickname()));
-			return ;
-		}
-		channel->handleKickCommand(user, delUser, delComment);
+		kickCmd(tokens, user);
+	}
+	else if (command == "INVITE"  && tokens.size() <= 3){
+		inviteCmd(tokens, user);
 	}
 	else if (command == "PRIVMSG"){
 		// handlePrivateMessage(tokens, users, user);
@@ -163,25 +163,5 @@ void Server::dealWIthUser(std::string& buff, User* user){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
 	}
 	else {
-		std::cout << "Unknown/Unvalid command" << std::endl;
 	}
 }
-
-Channel* Server::getChannelName(std::string& delChannel){
-	std::vector <Channel>::iterator it = channels.begin();
-	for (; it != channels.end(); ++it)
-		if (it->getName() == delChannel)
-			return &(*it);
-	std::cout << "The Channel : " << delChannel << " does not exist " << std::endl;
-	return NULL;
-}
-
-User* Server::getDelUser(std::string& name){
-	std::vector <User>::iterator it = users.begin();
-	for (; it != users.end(); ++it)
-		if (it->getNickname() == name)
-			return &(*it);
-	std::cout << "The User : " << name << " does not exist in the server " << std::endl;
-	return NULL;
-}
-

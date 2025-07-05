@@ -9,6 +9,11 @@ class Channel{
         std::string key;
         std::string topic;
 		bool justCreated;
+		bool inviteOnly;
+		bool requiredKey;
+		// bool isFull;
+		int maxUsers;
+		int currentUsers;
         std::vector <int> users_fd;
         std::vector <int> inviteds_fd;
         std::vector <int> operators_fd;
@@ -29,8 +34,10 @@ class Channel{
         bool isOperator(int users_fd) const;
         void invite(int users_fd);
         bool isInvited(int users_fd) const;
-        bool hasKey() const;
+		void addInvited(int fd);
+        bool hasKey();
         bool checkKey(const std::string& key) const;
+		bool isFull() const;
 
 		void handleJoinCommand(User* user, std::string& key);
 		void handleKickCommand(User* user, User* delUser, std::string& delComment);

@@ -177,18 +177,36 @@ std::vector<std::string> splitBySpace(const std::string& input) {
 	return tokens;
 }
 
+std::vector<std::string> splitByComma(const std::string& input) {
+	std::vector<std::string> tokens;
+	std::string token;
+	for (size_t i = 0; i < input.length(); ++i) {
+		if (input[i] == ',') {
+			if (!token.empty()) {
+				tokens.push_back(token);
+				token.clear();
+			}
+		} else {
+			token += input[i];
+		}
+	}
+	if (!token.empty()) {
+		tokens.push_back(token);
+	}
+	return tokens;
+}
+
 void sendReply(int fd, std::string reply) {
     send(fd, reply.c_str(), strlen(reply.c_str()), 0);
 }
 
 std::string parsse(std::string& str) {
-	if (!str.empty() && str.back() == '\n') {
-		str.erase(str.size() - 1);
-	}
-	if (!str.empty() && str.back() == '\r') {
-		str.erase(str.size() - 1);
-	}
-	return str;
+    while (!str.empty() && (str[str.size() - 1] == '\n' || str[str.size() - 1] == '\r')) {
+        str.erase(str.size() - 1);
+    }
+    return str;
 }
 
-
+bool checkChannelName(std::string& name){
+	return (name[0] == '#' || name[0] == '&');
+}

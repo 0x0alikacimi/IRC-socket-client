@@ -2,11 +2,15 @@
 #define once
 #include <string>
 
+#define MAX_GLOBAL_USERS 50
+
 #define PREFIX ":IRCServer "
 #define POSTFIX "\r\n"
 
 //Errors :
 #define ERR_BADCHANNELKEY(nickname, channel) 			PREFIX "475 " + nickname + " " + channel + " :Cannot join channel (+k)" POSTFIX //
+#define ERR_USERONCHANNEL(user, channel) PREFIX "443 " + user + " " + channel + " :is already on channel" POSTFIX
+
 #define ERR_NICKNAMEINUSE(target)						PREFIX "433 " + target + " :Nickname is already in use" POSTFIX //
 #define ERR_NEEDMOREPARAMS(command)						PREFIX "461 " + command + " :Not enough parameters" POSTFIX //
 #define ERR_UNKNOWNCOMMAND(command)						PREFIX "421 " + command + " :Unknown command" POSTFIX //
@@ -22,7 +26,7 @@
 #define ERR_ALREADYREGISTRED(target)					PREFIX "462 " + target + ":You may not reregister" POSTFIX //
 #define ERR_NOTREGISTERED								"Error: You are not registered." //
 #define ERR_CHANNELISFULL(client, channel)				PREFIX " 471 " + client + " " + channel + " :Cannot join channel (+l)" POSTFIX
-#define ERR_INVITEONLYCHAN(client, channel)				PREFIX " 473 " + client + " " + channel + " :Cannot join channel (+i)" POSTFIX
+#define ERR_INVITEONLYCHAN(client, channel)				PREFIX " 473 " + client + " " + channel + " :Cannot join channel (+i)" POSTFIX //
 #define ERR_NEEDMODEPARM(channelname, mode)				(std::string(": 696 ") + channelname + " * You must specify a parameter for the key mode. " + mode + POSTFIX)
 #define ERR_INVALIDMODEPARM(channelname, mode)			(std::string(": 696 ") + channelname + " Invalid mode parameter. " + mode + POSTFIX)
 #define ERR_UNKNOWNMODE(nickname, channelname, mode)	(std::string(": 472 ") + nickname + " " + channelname + " " + mode + " :is not a recognised channel mode" + POSTFIX)

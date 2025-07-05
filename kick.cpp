@@ -2,18 +2,26 @@
 #include "user.hpp"
 #include "replies.hpp"
 #include "pendingClient.hpp"
+#include "server.hpp"
 
-void Channel::removeUser(int user_fd) {
-    std::vector<int>::iterator user_vector;
-    user_vector = std::find(users_fd.begin(), users_fd.end(), user_fd);
-    if (user_vector != users_fd.end())
-        users_fd.erase(user_vector);
-    user_vector = std::find(operators_fd.begin(), operators_fd.end(), user_fd);
-    if (user_vector != operators_fd.end())
-        operators_fd.erase(user_vector);
-    user_vector = std::find(inviteds_fd.begin(), inviteds_fd.end(), user_fd);
-    if (user_vector != inviteds_fd.end())
-        inviteds_fd.erase(user_vector);
+void Server::kickCmd(std::vector<std::string> tokens, User* user){
+	std::string channelName = parsse(tokens[1]);
+	std::string name = parsse(tokens[2]);
+	std::cout << "(" << channelName << ")" << std::endl;
+	std::string delComment = "";
+	if (tokens.size() == 4)
+		delComment = parsse(tokens[3]);
+	Channel* channel = getChannelName(channelName);
+	if (!channel){
+		sendReply(user->get_fd() ,ERR_NOSUCHCHANNEL(channelName));
+		return ;
+	}
+	User* delUser = getDelUser(name);
+	if (!delUser){
+		sendReply(user->get_fd() ,ERR_NOSUCHNICK(user->getNickname()));
+		return ;
+	}
+	channel->handleKickCommand(user, delUser, delComment);
 }
 
 void Channel::handleKickCommand(User* user, User* delUser, std::string& delComment){
@@ -31,4 +39,17 @@ void Channel::handleKickCommand(User* user, User* delUser, std::string& delComme
 	}
 	removeUser(delUser->get_fd());
 	sendReply(user->get_fd(), RPL_KICK(user->getNickname(), name, delUser->getNickname(), delComment));
+}
+
+void Channel::removeUser(int user_fd) {
+    std::vector<int>::iterator user_vector;
+    user_vector = std::find(users_fd.begin(), users_fd.end(), user_fd);
+    if (user_vector != users_fd.end())
+        users_fd.erase(user_vector);
+    user_vector = std::find(operators_fd.begin(), operators_fd.end(), user_fd);
+    if (user_vector != operators_fd.end())
+        operators_fd.erase(user_vector);
+    user_vector = std::find(inviteds_fd.begin(), inviteds_fd.end(), user_fd);
+    if (user_vector != inviteds_fd.end())
+        inviteds_fd.erase(user_vector);
 }

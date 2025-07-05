@@ -3,7 +3,7 @@
 #include "replies.hpp"
 #include "pendingClient.hpp"
 
-Channel::Channel(const std::string& name, const std::string& key) : name(name) , key(key), topic(""), justCreated(true){
+Channel::Channel(const std::string& name, const std::string& key) : name(name) , key(key), topic(""), justCreated(true), inviteOnly(false), requiredKey(false), maxUsers(MAX_GLOBAL_USERS), currentUsers(0){
 }
 
 const std::string& Channel::getName() const{
@@ -21,8 +21,13 @@ void Channel::setTopic(const std::string& topic){
     this->topic = topic;
 }
 
-bool Channel::hasKey() const{
-    return !this->key.empty();
+bool Channel::hasKey() {
+    if (!this->key.empty()){
+		requiredKey = true;
+		return true;
+	}
+	requiredKey = false;
+	return false;
 }
 
 bool Channel::checkKey(const std::string& key) const{
@@ -33,8 +38,8 @@ bool Channel::isUserInChannel(int user_fd) const{
     return std::find(users_fd.begin(), users_fd.end(), user_fd) != users_fd.end();
 }
 
-bool Channel::isOperator(int user_fd) const{
-    return std::find(operators_fd.begin(), operators_fd.end(), user_fd) != users_fd.end();
+bool Channel::isOperator(int user_fd) const {
+    return std::find(operators_fd.begin(), operators_fd.end(), user_fd) != operators_fd.end();
 }
 
 void Channel::addOperator(int user_fd){
@@ -51,4 +56,14 @@ bool Channel::isInvited(int user_fd) const{
 void Channel::invite(int user_fd){
     if (!isInvited(user_fd))
         inviteds_fd.push_back(user_fd);
+}
+
+bool Channel::isFull() const{
+	return currentUsers >= maxUsers;
+}
+
+void Channel::addInvited(int fd){
+	if (!isInvited(fd)){
+		inviteds_fd.push_back(fd);
+	}
 }

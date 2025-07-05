@@ -32,6 +32,10 @@ class Server
 		Channel* getChannel(std::string& name, std::string& key);
 		Channel* getChannelName(std::string& delChannel);
 		User* getDelUser(std::string& name);
+
+		void joinCmd(std::vector<std::string> tokens, User* user);
+		void kickCmd(std::vector<std::string> tokens, User* user);
+		void inviteCmd(std::vector<std::string> tokens, User* user);
 };
 
 #endif

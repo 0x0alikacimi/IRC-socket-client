@@ -2,6 +2,29 @@
 #include "user.hpp"
 #include "replies.hpp"
 #include "pendingClient.hpp"
+#include "server.hpp"
+#include <vector>
+
+void Server::joinCmd(std::vector<std::string> tokens, User* user) {
+	std::vector<std::string> channelNames = splitByComma(parsse(tokens[1]));
+	std::vector<std::string> keys;
+	if (tokens.size() >= 3)
+		keys = splitByComma(parsse(tokens[2]));
+	if (keys.size() > channelNames.size())
+		return ;
+	for (std::size_t i = 0; i < channelNames.size(); ++i) {
+		std::string name = channelNames[i];
+		std::string key;
+		if (i >= key.size())
+			key = "";
+		else
+			key = keys[i];
+		if (checkChannelName(name)){
+			Channel* channel = getChannel(name, key);
+			channel->handleJoinCommand(user, key);
+		}
+	}
+}
 
 void Channel::handleJoinCommand(User* user, std::string& key){
 	addUser(user, key);
@@ -12,11 +35,20 @@ void Channel::addUser(User* user, const std::string& key){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getUsername()));
         return ;
 	}
-	if (hasKey() && !checkKey(key)){
+	if (hasKey() && !checkKey(key) && !isInvited(user->get_fd())){
 		sendReply(user->get_fd(), ERR_BADCHANNELKEY(user->getUsername(), name));
         return ;
 	}
+	if (inviteOnly && !isInvited(user->get_fd())){
+		sendReply(user->get_fd(), ERR_INVITEONLYCHAN(user->getNickname(), name));
+		return ;
+	}
+	if (isFull()){
+		sendReply(user->get_fd(), ERR_CHANNELISFULL(user->getNickname(), name));
+		return ;
+	}
     users_fd.push_back(user->get_fd());
+	currentUsers++;
 	sendReply(user->get_fd(), RPL_JOIN(user->getUsername(), name));
 	sendReply(user->get_fd(), RPL_TOPIC(user->getUsername(), name, topic));
 	sendReply(user->get_fd(), RPL_JOINMSG(user->getHostname(), "127.0.0.1", name));
