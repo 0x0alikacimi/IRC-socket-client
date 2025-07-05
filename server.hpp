@@ -36,6 +36,7 @@ class Server
 		void joinCmd(std::vector<std::string> tokens, User* user);
 		void kickCmd(std::vector<std::string> tokens, User* user);
 		void inviteCmd(std::vector<std::string> tokens, User* user);
+		void topicCmd(std::vector<std::string> tokens, User* user);
 };
 
 #endif

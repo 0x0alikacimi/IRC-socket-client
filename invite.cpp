@@ -31,9 +31,10 @@ void Server::inviteCmd(std::vector<std::string> tokens, User* user){
 		return ;
 	}
 	if (channel->isInvited(invitedUser->get_fd())){
-		sendReply(user->get_fd(), ERR_USERONCHANNEL(nickname, channel->getName()));
+		sendReply(user->get_fd(), ERR_ALREADYINVITED(nickname, channel->getName()));
 		return ;
 	}
 	channel->addInvited(invitedUser->get_fd());
 	sendReply(user->get_fd(), RPL_INVITING(user->getNickname(), nickname, channel->getName()));
+	sendReply(invitedUser->get_fd(), RPL_INVITE(user->getNickname(), nickname, channel->getName()));
 }

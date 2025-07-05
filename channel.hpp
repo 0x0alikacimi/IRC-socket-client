@@ -11,6 +11,7 @@ class Channel{
 		bool justCreated;
 		bool inviteOnly;
 		bool requiredKey;
+		bool topicRest;
 		// bool isFull;
 		int maxUsers;
 		int currentUsers;
@@ -24,9 +25,10 @@ class Channel{
         const std::string& getName() const;
         const std::string& getTopic() const;
         const std::string& getKey() const;
+		const bool getTopicRest() const ;
 
         void setTopic(const std::string& topic);
-
+		void setTopicRest();
         void addUser(User* user, const std::string& key);
         void removeUser(int users_fd);
         bool isUserInChannel(int users_fd) const;

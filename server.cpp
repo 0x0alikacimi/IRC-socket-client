@@ -139,10 +139,8 @@ User* Server::getDelUser(std::string& name){
 
 void Server::dealWIthUser(std::string& buff, User* user){
 	std::vector<std::string> tokens = splitBySpace(buff);
-	if (tokens.empty()) {
-		std::cout << "empty command" << std::endl;
+	if (tokens.empty())
 		return;
-	}
 	std::string command = tokens[0];
 	if (command == "JOIN" && tokens.size() >= 2 && tokens.size() <= 3){
 		joinCmd(tokens, user);
@@ -155,6 +153,9 @@ void Server::dealWIthUser(std::string& buff, User* user){
 	}
 	else if (command == "PRIVMSG"){
 		// handlePrivateMessage(tokens, users, user);
+	}
+	else if (command == "TOPIC"){
+		topicCmd(tokens, user);
 	}
 	else if ((command == "USER" || command == "NICK" || command == "PASS") && tokens.size() == 2){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));

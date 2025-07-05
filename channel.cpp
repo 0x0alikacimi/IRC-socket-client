@@ -3,7 +3,7 @@
 #include "replies.hpp"
 #include "pendingClient.hpp"
 
-Channel::Channel(const std::string& name, const std::string& key) : name(name) , key(key), topic(""), justCreated(true), inviteOnly(false), requiredKey(false), maxUsers(MAX_GLOBAL_USERS), currentUsers(0){
+Channel::Channel(const std::string& name, const std::string& key) : name(name) , key(key), topic(""), justCreated(true), inviteOnly(false), requiredKey(false), maxUsers(MAX_GLOBAL_USERS), currentUsers(0), topicRest(false){
 }
 
 const std::string& Channel::getName() const{
@@ -50,7 +50,7 @@ void Channel::addOperator(int user_fd){
 }
 
 bool Channel::isInvited(int user_fd) const{
-    return std::find(inviteds_fd.begin(), inviteds_fd.end(), user_fd) != users_fd.end();
+    return std::find(inviteds_fd.begin(), inviteds_fd.end(), user_fd) != inviteds_fd.end();
 }
 
 void Channel::invite(int user_fd){
@@ -66,4 +66,12 @@ void Channel::addInvited(int fd){
 	if (!isInvited(fd)){
 		inviteds_fd.push_back(fd);
 	}
+}
+
+const bool Channel::getTopicRest() const {
+	return topicRest;
+}
+
+void Channel::setTopicRest()  {
+	topicRest = true;
 }
