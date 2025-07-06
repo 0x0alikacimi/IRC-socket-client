@@ -5,6 +5,11 @@
 #include "server.hpp"
 
 void Server::kickCmd(std::vector<std::string> tokens, User* user){
+	std::string command = parsse(tokens[0]);
+	if (tokens.size() < 3){
+		sendReply(user->get_fd(), ERR_NEEDMOREPARAMS(command));
+		return ;
+	}
 	std::string channelName = parsse(tokens[1]);
 	std::string name = parsse(tokens[2]);
 	std::string delComment = "";

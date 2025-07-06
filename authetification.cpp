@@ -16,11 +16,11 @@ void PendingClient::handleRegistration(std::string& buff, std::string& password,
 		return;
 	std::string command = parsse(tokens[0]);
 	if (command != "NICK" && command != "PASS" && command != "USER"){
-		sendReply(user_fd, ERR_UNKNOWNCOMMAND(buff));
+		sendReply(user_fd, ERR_UNKNOWNCOMMAND(command));
 		return ;
 	}
 	if (tokens.size() < 2){
-		sendReply(user_fd, ERR_NEEDMOREPARAMS(buff));
+		sendReply(user_fd, ERR_NEEDMOREPARAMS(command));
 		return ;
 	}
 	std::string value = parsse(tokens[1]);
@@ -38,13 +38,13 @@ void PendingClient::handleRegistration(std::string& buff, std::string& password,
 			handleUserCommand(value, value1, value2, value3, users, pendingUsers);
 		}
 		else
-			sendReply(user_fd, ERR_NEEDMOREPARAMS(buff));
+			sendReply(user_fd, ERR_NEEDMOREPARAMS(command));
 	}
 	else if (command == "JOIN" || command == "KICK" || command == "PRIVMSG" || command == "MODE" || command == "TOPIC" || command == "INVITE"){
 		sendReply(user_fd, ERR_NOTREGISTERED);
 	}
 	else {
-		sendReply(user_fd, ERR_UNKNOWNCOMMAND(buff));
+		sendReply(user_fd, ERR_UNKNOWNCOMMAND(command));
 	}
 }
 

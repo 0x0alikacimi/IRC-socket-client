@@ -49,6 +49,12 @@ void Channel::addOperator(int user_fd){
 	}
 }
 
+void Channel::removeOperator(int user_fd){
+	std::vector<int>::iterator user_vector = std::find(operators_fd.begin(), operators_fd.end(), user_fd);
+    if (user_vector != operators_fd.end())
+        operators_fd.erase(user_vector);
+}
+
 bool Channel::isInvited(int user_fd) const{
     return std::find(inviteds_fd.begin(), inviteds_fd.end(), user_fd) != inviteds_fd.end();
 }
@@ -72,6 +78,17 @@ const bool Channel::getTopicRest() const {
 	return topicRest;
 }
 
-void Channel::setTopicRest()  {
-	topicRest = true;
+void Channel::setTopicRest(bool is)  {
+	topicRest = is;
+}
+
+void Channel::setInviteOnly(bool is) {
+	inviteOnly = is;
+}
+
+void Channel::setMaxUsers(int max){
+	maxUsers = max;
+}
+void Channel::setKey(std::string& key){
+	this->key = key;
 }

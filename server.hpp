@@ -24,7 +24,7 @@ class Server
 
 		void remove_pending_client(int fd);
 		void remove_user(int fd);
-		void pending_to_user(PendingClient *client);/*later*/
+		void pending_to_user(PendingClient *client);
 
 		bool isReadyForRegistration(std::string& comand, PendingClient* pending) const;
 
@@ -37,6 +37,9 @@ class Server
 		void kickCmd(std::vector<std::string> tokens, User* user);
 		void inviteCmd(std::vector<std::string> tokens, User* user);
 		void topicCmd(std::vector<std::string> tokens, User* user);
+		void modeCmd(std::vector<std::string> tokens, User* user);
+
+		void handleMultipleModes(Channel* channel, std::vector<std::string> tokens, User* user, std::string mode);
 };
 
 #endif

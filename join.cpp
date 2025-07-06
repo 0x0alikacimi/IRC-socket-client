@@ -8,6 +8,11 @@
 void Server::joinCmd(std::vector<std::string> tokens, User* user) {
 	std::vector<std::string> channelNames = splitByComma(parsse(tokens[1]));
 	std::vector<std::string> keys;
+	std::string command = tokens[0];
+	if (tokens.size() < 2){
+		sendReply(user->get_fd(), ERR_NEEDMOREPARAMS(command));
+		return ;
+	}
 	if (tokens.size() >= 3)
 		keys = splitByComma(parsse(tokens[2]));
 	if (keys.size() > channelNames.size())

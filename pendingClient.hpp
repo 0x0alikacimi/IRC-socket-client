@@ -70,7 +70,7 @@ class PendingClient{
 	std::vector<std::string> splitBySpace(const std::string& input);
 	std::vector<std::string> splitByComma(const std::string& input);
 	bool checkChannelName(std::string& name);
-	std::string parsse(std::string& std);
+	std::string& parsse(std::string& std);
 	void sendReply(int fd, std::string reply);
 
 #endif

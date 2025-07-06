@@ -200,7 +200,7 @@ void sendReply(int fd, std::string reply) {
     send(fd, reply.c_str(), strlen(reply.c_str()), 0);
 }
 
-std::string parsse(std::string& str) {
+std::string& parsse(std::string& str) {
     while (!str.empty() && (str[str.size() - 1] == '\n' || str[str.size() - 1] == '\r')) {
         str.erase(str.size() - 1);
     }

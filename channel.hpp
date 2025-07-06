@@ -28,14 +28,19 @@ class Channel{
 		const bool getTopicRest() const ;
 
         void setTopic(const std::string& topic);
-		void setTopicRest();
+		void setTopicRest(bool is);
+		void setMaxUsers(int max);
+		void setKey(std::string& key);
+		void setInviteOnly(bool is);
+
         void addUser(User* user, const std::string& key);
         void removeUser(int users_fd);
-        bool isUserInChannel(int users_fd) const;
-        void addOperator(int users_fd);
-        bool isOperator(int users_fd) const;
-        void invite(int users_fd);
-        bool isInvited(int users_fd) const;
+        bool isUserInChannel(int user_fd) const;
+        void addOperator(int user_fd);
+		void removeOperator(int user_fd);
+        bool isOperator(int user_fd) const;
+        void invite(int user_fd);
+        bool isInvited(int user_fd) const;
 		void addInvited(int fd);
         bool hasKey();
         bool checkKey(const std::string& key) const;
@@ -43,6 +48,14 @@ class Channel{
 
 		void handleJoinCommand(User* user, std::string& key);
 		void handleKickCommand(User* user, User* delUser, std::string& delComment);
+
+		void handleSingleMode(std::vector<std::string> tokens, User* user, User* opUser, std::string mode);
+
+		void handleInviteMode(std::vector<std::string> tokens, User* user, std::string mode);
+		void handleTopicMode(std::vector<std::string> tokens, User* user, std::string mode);
+		void handleLimitMode(std::vector<std::string> tokens, User* user, std::string mode);
+		void handleKeyMode(std::vector<std::string> tokens, User* user, std::string mode);
+		void handleOperatorMode(std::vector<std::string> tokens, User* user, User* opUser, std::string mode);
 };
 
 #endif

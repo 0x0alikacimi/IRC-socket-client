@@ -59,7 +59,6 @@ void Server::start_server()
 
 					if (pending)
 					{
-						/*deal with pending*/
 						std::string save1 = buff;
 						if (isReadyForRegistration(save1, pending))
 						{
@@ -72,12 +71,9 @@ void Server::start_server()
 					}
 					else if (user)
 					{
-						/*deal with user*/
 						std::string save2 = buff;
 						dealWIthUser(save2, user);
 					}
-
-					// std::cout << "received form " << i << ": " << buff << std::endl;
 				}
 			}
 			i++;
@@ -145,7 +141,7 @@ void Server::dealWIthUser(std::string& buff, User* user){
 	if (command == "JOIN" && tokens.size() >= 2 && tokens.size() <= 3){
 		joinCmd(tokens, user);
 	}
-	else if (command == "KICK" && tokens.size() >= 3 && tokens.size() <= 4){
+	else if (command == "KICK" && tokens.size() <= 4){
 		kickCmd(tokens, user);
 	}
 	else if (command == "INVITE"  && tokens.size() <= 3){
@@ -156,6 +152,9 @@ void Server::dealWIthUser(std::string& buff, User* user){
 	}
 	else if (command == "TOPIC"){
 		topicCmd(tokens, user);
+	}
+	else if (command == "MODE"){
+		modeCmd(tokens, user);
 	}
 	else if ((command == "USER" || command == "NICK" || command == "PASS") && tokens.size() == 2){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
