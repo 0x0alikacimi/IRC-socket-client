@@ -14,7 +14,7 @@ void Server::inviteCmd(std::vector<std::string> tokens, User* user){
 	std::string channelname = parsse(tokens[2]);
 	Channel* channel = getChannelName(channelname);
 	if (!channel){
-		sendReply(user->get_fd(), ERR_NOSUCHCHANNEL(command));
+		sendReply(user->get_fd(), ERR_NOSUCHCHANNEL(channelname));
 		return ;
 	}
 	if (!(channel->isUserInChannel(user->get_fd()))){

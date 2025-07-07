@@ -47,3 +47,11 @@ void User::setServername(std::string& servername){
 void User::setRealname(std::string& realname){
 	this->realname = realname;
 }
+
+int User::getNbrChannels() const{
+	return nbrChannels ;
+}
+
+void User::plusChannel() {
+	nbrChannels++ ;
+}

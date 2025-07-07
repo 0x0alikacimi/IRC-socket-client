@@ -85,6 +85,10 @@ void Server::modeCmd(std::vector<std::string> tokens, User* user){
 	if (mode.size() == 2){
 		User* opUser;
 		if (mode[1] == 'o'){
+			if (tokens.size() != 4){
+				sendReply(user->get_fd(), ERR_NEEDMOREPARAMS(command));
+				return ;
+			}
 			opUser = getDelUser(parsse(tokens[3]));
 			if (!opUser){
 				sendReply(user->get_fd() ,ERR_NOSUCHNICK(parsse(tokens[3])));

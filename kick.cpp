@@ -38,11 +38,11 @@ void Channel::handleKickCommand(User* user, User* delUser, std::string& delComme
 		return ;
 	}
 	if (!isUserInChannel(delUser->get_fd())){
-		sendReply(user->get_fd(), ERR_NOTONCHANNEL(user->getNickname(), name));
+		sendReply(user->get_fd(), ERR_USERNOTINCHANNEL(delUser->getNickname(), name));
 		return ;
 	}
-	removeUser(delUser->get_fd());
 	sendReply(user->get_fd(), RPL_KICK(user->getNickname(), name, delUser->getNickname(), delComment));
+	removeUser(delUser->get_fd());
 }
 
 void Channel::removeUser(int user_fd) {

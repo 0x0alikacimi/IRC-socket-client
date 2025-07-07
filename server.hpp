@@ -32,6 +32,7 @@ class Server
 		Channel* getChannel(std::string& name, std::string& key);
 		Channel* getChannelName(std::string& delChannel);
 		User* getDelUser(std::string& name);
+		User* getUserByfd(std::string& name);
 
 		void joinCmd(std::vector<std::string> tokens, User* user);
 		void kickCmd(std::vector<std::string> tokens, User* user);
@@ -40,6 +41,7 @@ class Server
 		void modeCmd(std::vector<std::string> tokens, User* user);
 
 		void handleMultipleModes(Channel* channel, std::vector<std::string> tokens, User* user, std::string mode);
+
 };
 
 #endif

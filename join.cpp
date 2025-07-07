@@ -11,6 +11,7 @@ void Server::joinCmd(std::vector<std::string> tokens, User* user) {
 	std::string command = tokens[0];
 	if (tokens.size() < 2){
 		sendReply(user->get_fd(), ERR_NEEDMOREPARAMS(command));
+		std::cout << "hh" << tokens.size() << std::endl;
 		return ;
 	}
 	if (tokens.size() >= 3)
@@ -26,18 +27,18 @@ void Server::joinCmd(std::vector<std::string> tokens, User* user) {
 			key = keys[i];
 		if (checkChannelName(name)){
 			Channel* channel = getChannel(name, key);
-			channel->handleJoinCommand(user, key);
+			channel->handleJoinCommand(user, key, users);
 		}
 	}
 }
 
-void Channel::handleJoinCommand(User* user, std::string& key){
-	addUser(user, key);
+void Channel::handleJoinCommand(User* user, std::string& key, std::vector <User>& users){
+	addUser(user, key, users);
 }
 
-void Channel::addUser(User* user, const std::string& key){
+void Channel::addUser(User* user, const std::string& key, std::vector <User>& users){
     if (isUserInChannel(user->get_fd())){
-		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getUsername()));
+		sendReply(user->get_fd(), ERR_USERONCHANNEL(user->getUsername(), name));
         return ;
 	}
 	if (hasKey() && !checkKey(key) && !isInvited(user->get_fd())){
@@ -52,13 +53,24 @@ void Channel::addUser(User* user, const std::string& key){
 		sendReply(user->get_fd(), ERR_CHANNELISFULL(user->getNickname(), name));
 		return ;
 	}
+	if (user->getNbrChannels() >= MAX_CHANNELS){
+		sendReply(user->get_fd(), ERR_TOOMANYCHANNELS(name));
+		return ;
+	}
     users_fd.push_back(user->get_fd());
 	currentUsers++;
+	user->plusChannel();
 	sendReply(user->get_fd(), RPL_JOIN(user->getUsername(), name));
-	sendReply(user->get_fd(), RPL_TOPIC(user->getUsername(), name, topic));
+	if (topic != "")
+		sendReply(user->get_fd(), RPL_TOPIC(user->getUsername(), name, topic));
+	else
+		sendReply(user->get_fd(), RPL_NOTOPIC(user->getUsername(), name));
 	sendReply(user->get_fd(), RPL_JOINMSG(user->getHostname(), "127.0.0.1", name));
+	sendReply(user->get_fd(), RPL_NAMREPLY(user->getNickname(), name, getUserList(users)));
+	// sendReply(user->get_fd(), RPL_ENDOFNAMES(user->getNickname(), name));
 	if (justCreated){
 		addOperator(user->get_fd());
 		justCreated = false;
 	}
 }
+

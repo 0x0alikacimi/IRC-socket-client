@@ -92,3 +92,27 @@ void Channel::setMaxUsers(int max){
 void Channel::setKey(std::string& key){
 	this->key = key;
 }
+
+std::string Channel::getUserList(std::vector <User>& users) const {
+    std::string userList;
+    for (size_t i = 0; i < users_fd.size(); ++i) {
+        User* user = getUserByfd(users_fd[i], users);
+        if (!user)
+            continue;
+        if (isOperator(user->get_fd()))
+            userList += "@";
+        userList += user->getNickname();
+        userList += " ";
+    }
+    if (!userList.empty())
+        userList.pop_back();
+    return userList;
+}
+
+User* Channel::getUserByfd(int fd, std::vector <User>& users) const {
+	std::vector <User>::iterator it = users.begin();
+	for (; it != users.end(); ++it)
+		if (it->get_fd() == fd)
+			return &(*it);
+	return NULL;
+}

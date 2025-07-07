@@ -134,6 +134,7 @@ User* Server::getDelUser(std::string& name){
 }
 
 void Server::dealWIthUser(std::string& buff, User* user){
+	// std::cout << "(" << buff<< ")" << std::endl;
 	std::vector<std::string> tokens = splitBySpace(buff);
 	if (tokens.empty())
 		return;
@@ -148,7 +149,7 @@ void Server::dealWIthUser(std::string& buff, User* user){
 		inviteCmd(tokens, user);
 	}
 	else if (command == "PRIVMSG"){
-		// handlePrivateMessage(tokens, users, user);
+		// handlePrivateMessage(tokens, users, user);s
 	}
 	else if (command == "TOPIC"){
 		topicCmd(tokens, user);

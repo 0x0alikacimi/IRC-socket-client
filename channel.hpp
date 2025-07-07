@@ -33,7 +33,7 @@ class Channel{
 		void setKey(std::string& key);
 		void setInviteOnly(bool is);
 
-        void addUser(User* user, const std::string& key);
+        void addUser(User* user, const std::string& key, std::vector <User>& users);
         void removeUser(int users_fd);
         bool isUserInChannel(int user_fd) const;
         void addOperator(int user_fd);
@@ -46,7 +46,7 @@ class Channel{
         bool checkKey(const std::string& key) const;
 		bool isFull() const;
 
-		void handleJoinCommand(User* user, std::string& key);
+		void handleJoinCommand(User* user, std::string& key, std::vector <User>& users);
 		void handleKickCommand(User* user, User* delUser, std::string& delComment);
 
 		void handleSingleMode(std::vector<std::string> tokens, User* user, User* opUser, std::string mode);
@@ -56,6 +56,10 @@ class Channel{
 		void handleLimitMode(std::vector<std::string> tokens, User* user, std::string mode);
 		void handleKeyMode(std::vector<std::string> tokens, User* user, std::string mode);
 		void handleOperatorMode(std::vector<std::string> tokens, User* user, User* opUser, std::string mode);
+		std::string getUserList(std::vector <User>& users) const;
+		User* getUserByfd(int fd, std::vector <User>& users) const;
+
 };
 
 #endif
+

@@ -3,11 +3,12 @@
 #include <string>
 
 #define MAX_GLOBAL_USERS 50
-
+#define MAX_CHANNELS 10
 #define PREFIX ":IRCServer "
 #define POSTFIX "\r\n"
 
 //Errors :
+#define ERR_TOOMANYCHANNELS(channel) PREFIX "405 " + channel + " :You have joined too many channels" POSTFIX
 #define ERR_BADCHANNELKEY(nickname, channel) 			PREFIX "475 " + nickname + " " + channel + " :Cannot join channel (+k)" POSTFIX //
 #define ERR_USERONCHANNEL(user, channel) PREFIX "443 " + user + " " + channel + " :is already on channel" POSTFIX
 #define ERR_ALREADYINVITED(nickname, channel) PREFIX "999 " + nickname + " " + channel + " :User already invited" POSTFIX
@@ -40,12 +41,12 @@
 #define RPL_TOPIC(sender, channel, topic)				PREFIX " 332 " + sender + " " + channel + " :" + topic + POSTFIX //
 #define RPL_PRIVMSG(sender, target, msg)				":" + sender + " PRIVMSG " + target + " :" + msg + POSTFIX
 #define RPL_NICK(sender, nick)							":" + sender + " NICK " + nick + POSTFIX
-#define RPL_NOTOPIC(sender, channel)					PREFIX " 331 " + sender + " " + channel + " :No topic is set" + POSTFIX
+#define RPL_NOTOPIC(sender, channel)					PREFIX " 331 " + sender + " " + channel + " :No topic is set" + POSTFIX //
 #define RPL_INVITING(nickname, targnick, targchan)  	": 341 " + nickname + " " + targnick + " " + targchan + POSTFIX //
-#define RPL_INVITE(sender, target, channel)				":" + sender + " INVITE " + target + " " + channel + POSTFIX
+#define RPL_INVITE(sender, target, channel)				":" + sender + " INVITE " + target + " " + channel + POSTFIX //
 #define RPL_JOINMSG(hostname, ipaddress, channelname)	(":" + hostname + "@" + ipaddress + " JOIN " + channelname + POSTFIX) //
 #define RPL_JOIN(sender, channel)						":" + sender + " JOIN :" + channel + POSTFIX //
 #define RPL_CHANGEMODE(hostname, channelname, mode)		(":" + hostname + " MODE " + channelname + " " + mode + POSTFIX)
 #define RPL_UMODEIS(hostname, channelname, mode, user)	":" + hostname + " MODE " + channelname + " " + mode + " " + user + POSTFIX
-#define RPL_KICK(sender, channel, target, comment) ":" + sender + " KICK " + channel + " " + target + " :" + comment + POSTFIX
+#define RPL_KICK(sender, channel, target, comment) ":" + sender + " KICK " + channel + " " + target + " :" + comment + POSTFIX //
 

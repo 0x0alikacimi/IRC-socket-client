@@ -25,6 +25,7 @@ class User
 		std::string realname;
 		std::string nickname;
 		int user_fd;
+		int nbrChannels;
 	public :
 		User(int fd, std::string username, std::string hostname, std::string servername, std::string realname, std::string nickname);
 		int get_fd() const;
@@ -33,6 +34,8 @@ class User
 		const std::string getServername() const;
 		const std::string getRealname() const;
 		const std::string getNickname() const;
+		int getNbrChannels() const;
+		void plusChannel() ;
 
 		void setUsername(std::string& username);
 		void setHostname(std::string& username);
