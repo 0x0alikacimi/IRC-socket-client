@@ -1,6 +1,7 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <ctime>
 #include "pendingClient.hpp"
 #include "user.hpp"
 #include "channel.hpp"

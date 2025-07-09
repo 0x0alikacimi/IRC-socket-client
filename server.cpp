@@ -133,6 +133,14 @@ User* Server::getDelUser(std::string& name){
 	return NULL;
 }
 
+void call_boot(User *user)
+{
+	std::time_t t = std::time(NULL);
+	std::string str_time = std::ctime(&t);
+	std::string rep_msg = RPL_PRIVMSG(user->getNickname(), user->getNickname(), str_time);
+	sendReply(user->get_fd(), rep_msg);
+}
+
 void Server::dealWIthUser(std::string& buff, User* user){
 	// std::cout << "(" << buff<< ")" << std::endl;
 	std::vector<std::string> tokens = splitBySpace(buff);
@@ -162,6 +170,10 @@ void Server::dealWIthUser(std::string& buff, User* user){
 	}
 	else if (command == "USER" && tokens.size() == 2){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
+	}
+	else if (command == "TIME")
+	{
+		call_boot(user);
 	}
 	else {
 	}
