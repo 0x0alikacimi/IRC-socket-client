@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include "replies.hpp"
+#include "user.hpp"
 
 void	send_msg(int fd, std::string  msg)
 {
@@ -30,55 +31,116 @@ std::vector<std::string> get_recs(std::string &receiversToken)
 	return (tokens);
 }
 
-void handlePrivateMessage(std::vector <std::string> tokens, std::vector<User> users, User *sender)
+void Server::to_user(User *sender, std::string msg, std::string target, std::vector<User> users)
 {
-	std::string msg_str;
+	std::string rep_msg;
+	bool found = false;
+	int i = 0;
+	while(i < users.size())
+	{
+		if (target == users[i].getNickname())
+		{
+			found = true;
+			break;
+		}
+		i++;
+	}
+	if (found == true)
+	{
+		rep_msg = RPL_PRIVMSG(sender->getNickname(), target, msg);
+		send_msg(users[i].get_fd(), rep_msg);
+	}
+	else
+	{
+		rep_msg = ERR_NOSUCHNICK(target);
+		send_msg(sender->get_fd(), rep_msg);
+	}
+}
+
+void Channel::broad_cast_channel(std::string msg, User sender)
+{
+	std::string rep_msg;
+	int i = 0;
+	while (i < currentUsers)
+	{
+		rep_msg = RPL_PRIVMSG(sender.getNickname(), "target's nick name later", msg);/*!!!!!!!!!!!*/
+		send_msg(users_fd[i], msg);
+		i++;
+	}
+}
+
+void Server::to_channel(User sender, std::string msg,std::string target, std::vector <Channel> cha)
+{
+	std::string rep_msg;
+	int i = 0;
+	bool found = false;
+	while (i < cha.size())
+	{
+		if (target == cha[i].getName())
+		{
+			found = true;
+			break;
+		}
+		i++;
+	}
+	if (found == true)
+	{
+		bool fuond_user = false;
+		if (cha[i].isUserInChannel(sender.get_fd()))
+		{
+			cha[i].broad_cast_channel(msg, sender);
+		}
+		else
+		{
+			rep_msg = ERR_USERNOTINCHANNEL(sender.getNickname(), cha[i].getName());
+			send_msg(sender.get_fd(), rep_msg);
+		}
+	}
+	else
+	{
+		rep_msg = ERR_NOSUCHCHANNEL(target);
+		send_msg(sender.get_fd(), rep_msg);
+	}
+}
+
+void Server::handlePrivateMessage(std::vector<std::string> tokens, std::vector<User> users, std::vector<Channel> &channels, User *sender)
+{
+	std::string msg;
+	std::string target;
+	std::vector<std::string> vec_recipients;
+
 	if (tokens.size() < 3)
 	{
-		std::string err_msg = ERR_NEEDMOREPARAMS(tokens[0]);
-		send_msg(sender->get_fd(), err_msg);
+		std::string rep_msg = ERR_NEEDMOREPARAMS(tokens[0]);
+		send_msg(sender->get_fd(), rep_msg);
 		return;
 	}
-	std::vector <std::string> vec_recivers = get_recs(tokens[1]);
-	std::string msg;
+
+	vec_recipients = get_recs(tokens[1]);
+
 	if (!tokens[2].empty() && tokens[2][0] == ':')
 		msg = tokens[2].substr(1);
 	else
 		msg = tokens[2];
 
-	int i = 3;
-	while (i < tokens.size())
-	{
+	for (size_t i = 3; i < tokens.size(); ++i)
 		msg += " " + tokens[i];
-		i++;
-	}
-	std::string target;
-	std::vector<User>::iterator it;
-	bool valid = false;
-	i = 0;
-	while (i < vec_recivers.size())
+
+	int i = 0;
+	while (i < vec_recipients.size())
 	{
-		it = users.begin(); ;
-		target = vec_recivers[i];
-		valid = false;
-		while (it != users.end())
+		target = vec_recipients[i];
+		if (!target.empty() && target[0] == '#')
 		{
-			if (it->getNickname() == target)
-			{
-				valid = true;
-				msg_str = "PRIVMSG " + target + " :" + msg + "\r\n";
-				send_msg(it->get_fd(), msg_str);
-				break;
-			}
-			it++;
+			/*channel msg*/
 		}
-		if (!valid)
+		else
 		{
-			msg_str = ":server 401 " + sender->getNickname() + " " + target + " :No such nick/channel\r\n";
-			send_msg(sender->get_fd(), msg_str);
+			/*user msg*/
 		}
 		i++;
 	}
+
 }
 
 
