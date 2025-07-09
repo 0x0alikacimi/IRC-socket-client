@@ -47,13 +47,13 @@ void Server::to_user(User sender, std::string msg, std::string target, std::vect
 	}
 	if (found == true)
 	{
-		rep_msg = RPL_PRIVMSG(sender->getNickname(), target, msg);
+		rep_msg = RPL_PRIVMSG(sender.getNickname(), target, msg);
 		send_msg(users[i].get_fd(), rep_msg);
 	}
 	else
 	{
 		rep_msg = ERR_NOSUCHNICK(target);
-		send_msg(sender->get_fd(), rep_msg);
+		send_msg(sender.get_fd(), rep_msg);
 	}
 }
 
