@@ -31,7 +31,7 @@ std::vector<std::string> get_recs(std::string &receiversToken)
 	return (tokens);
 }
 
-void Server::to_user(User *sender, std::string msg, std::string target, std::vector<User> users)
+void Server::to_user(User sender, std::string msg, std::string target, std::vector<User> users)
 {
 	std::string rep_msg;
 	bool found = false;
@@ -132,11 +132,11 @@ void Server::handlePrivateMessage(std::vector<std::string> tokens, std::vector<U
 		target = vec_recipients[i];
 		if (!target.empty() && target[0] == '#')
 		{
-			/*channel msg*/
+			to_channel(*sender, msg, target, channels);
 		}
 		else
 		{
-			/*user msg*/
+			to_user(*sender , msg, target, users);
 		}
 		i++;
 	}
