@@ -21,7 +21,7 @@ void Server::start_server()
 		}
 		if (pfds[0].revents & POLLIN)
 		{
-			int new_users_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);/*!*/
+			int new_users_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);
 			if (new_users_fd < 0)
 			{
 				std::cerr << "error accepting new client." << std::endl;
@@ -85,9 +85,13 @@ void Server::start_server()
 Server::Server(int port, std::string password) : port(port), password(password)
 {
 	server_fd = socket(AF_INET, SOCK_STREAM, DEF_PROTOCOL);
+	if (server_fd == -1)
+		throw std::runtime_error("Failed to create socket");
 
 	int opt = 1;
-	setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+		throw std::runtime_error("Failed to set socket options");
+
 	fcntl(server_fd, F_SETFL, O_NONBLOCK);
 
 	sockaddr_in serv_add;
@@ -96,9 +100,10 @@ Server::Server(int port, std::string password) : port(port), password(password)
 	serv_add.sin_addr.s_addr = INADDR_ANY;
 	serv_add.sin_port = htons(port);
 
-	bind(server_fd, (sockaddr *)&serv_add, sizeof(serv_add));
-
-	listen(server_fd, MAX_PENDING);
+	if (bind(server_fd, (sockaddr *)&serv_add, sizeof(serv_add)))
+		throw std::runtime_error("Failed to bind socket");
+	if(listen(server_fd, MAX_PENDING))
+		throw std::runtime_error("Failed to listen on socket");
 }
 
 std::vector <User> Server::getUsers(){
