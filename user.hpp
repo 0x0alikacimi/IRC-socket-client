@@ -11,6 +11,7 @@
 #include <poll.h>
 #include <cstring>
 #include <cstdlib>
+#include <csignal>
 
 #define DEF_PROTOCOL 0 /*the default protocol for IPv4 TCP, which is TCP itself.*/
 #define MAX_PENDING 1 /*is the backlog queue size (max pending connections waiting).*/

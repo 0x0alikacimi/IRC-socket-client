@@ -6,6 +6,7 @@ int main (int ac , char **av)
 	{
 		try
 		{
+			signal(SIGPIPE, SIG_IGN);
 			int port = std::atoi(av[1]);
 			if (port <= 0 || port >= 65535)
 			{
