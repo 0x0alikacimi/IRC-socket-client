@@ -34,7 +34,7 @@ class Server
 		Channel* getChannelName(std::string& delChannel);
 		User* getDelUser(std::string& name);
 		User* getUserByfd(std::string& name);
-		User* Server::getUserByFd(int fd);
+		User* getUserByFd(int fd);
 
 		void joinCmd(std::vector<std::string> tokens, User* user);
 		void kickCmd(std::vector<std::string> tokens, User* user);
@@ -47,6 +47,7 @@ class Server
 		void handlePrivateMessage(std::vector<std::string> tokens, std::vector<User> users, std::vector<Channel> &channels, User *sender);
 		void to_user(User sender, std::string msg, std::string target, std::vector<User> users);
 		void to_channel(User sender, std::string msg,std::string target, std::vector <Channel> cha);
+		void deal_with_bot(User sender, std::string msg);
 };
 
 #endif

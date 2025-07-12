@@ -59,7 +59,7 @@ class Channel{
 		std::string getUserList(std::vector <User>& users) const;
 		User* getUserByfd(int fd, std::vector <User>& users) const;
 
-		void broad_cast_channel(std::string msg, User sender);
+		void broad_cast_channel(std::string msg, User sender, std::vector<User> users);
 };
 
 #endif

@@ -57,14 +57,18 @@ void Server::to_user(User sender, std::string msg, std::string target, std::vect
 	}
 }
 
-void Channel::broad_cast_channel(std::string msg, User sender)
+void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User> users)
 {
 	std::string rep_msg;
 	int i = 0;
 	while (i < currentUsers)
 	{
-		rep_msg = RPL_PRIVMSG(sender.getNickname(), "target's nick name later", msg);/*!!!!!!!!!!!*/
-		send_msg(users_fd[i], msg);
+		User *u = getUserByfd(users_fd[i], users);
+		if(u)
+		{
+			rep_msg = RPL_PRIVMSG(sender.getNickname(), u->getNickname(), msg);
+			send_msg(users_fd[i], msg);
+		}
 		i++;
 	}
 }
@@ -88,7 +92,7 @@ void Server::to_channel(User sender, std::string msg,std::string target, std::ve
 		bool fuond_user = false;
 		if (cha[i].isUserInChannel(sender.get_fd()))
 		{
-			cha[i].broad_cast_channel(msg, sender);
+			cha[i].broad_cast_channel(msg, sender, users);
 		}
 		else
 		{
@@ -102,6 +106,32 @@ void Server::to_channel(User sender, std::string msg,std::string target, std::ve
 		send_msg(sender.get_fd(), rep_msg);
 	}
 }
+
+void Server::deal_with_bot(User sender, std::string msg)
+{
+	std::string bot_name = "bot";
+	std::string rep_msg;
+	if (msg == "TIME")
+	{
+		User *bot_use = this->getDelUser(bot_name);
+		if (bot_use)
+		{
+			send_msg(bot_use->get_fd(), sender.getNickname());
+		}
+		else
+		{
+			rep_msg = ERR_NOSUCHNICK(bot_name);
+			send_msg(sender.get_fd(), rep_msg);
+		}
+	}
+	else
+	{
+		std::string invalid = "invalid option for bot";
+		rep_msg = RPL_PRIVMSG(sender.getNickname() , sender.getNickname(), invalid);
+		send_msg(sender.get_fd(), rep_msg);
+	}
+}
+
 
 void Server::handlePrivateMessage(std::vector<std::string> tokens, std::vector<User> users, std::vector<Channel> &channels, User *sender)
 {
@@ -136,6 +166,8 @@ void Server::handlePrivateMessage(std::vector<std::string> tokens, std::vector<U
 		}
 		else
 		{
+			if (target == "bot")
+				deal_with_bot(*sender, msg);
 			to_user(*sender , msg, target, users);
 		}
 		i++;
