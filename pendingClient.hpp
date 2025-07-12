@@ -60,7 +60,7 @@ class PendingClient{
 		bool checkPassword(std::string& password, std::string& truePassword) const;
 		bool checkNickname(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers) const;
 
-		void handleRegistration(std::string& buff, std::string& password, std::vector <User> users, std::vector <PendingClient> pendingUsers);
+		void handleRegistration(std::vector<std::string> tokens, std::string& password, std::vector <User> users, std::vector <PendingClient> pendingUsers);
 		void handleUserCommand(std::string& username, std::string& hostname, std::string& servername, std::string& realname, std::vector <User> users, std::vector <PendingClient> pendingUsers);
 		void handleNickCommand(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers);
 		void handlePassCommand(std::string& password, std::string& truePassword);
@@ -69,6 +69,7 @@ class PendingClient{
 
 	std::vector<std::string> splitBySpace(const std::string& input);
 	std::vector<std::string> splitByComma(const std::string& input);
+	std::vector<std::string> splitByLine(const std::string& input);
 	bool checkChannelName(std::string& name);
 	std::string& parsse(std::string& std);
 	void sendReply(int fd, std::string reply);

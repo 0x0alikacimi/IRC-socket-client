@@ -2,16 +2,15 @@
 #include "server.hpp"
 #include "replies.hpp"
 
-bool Server::isReadyForRegistration(std::string& buff, PendingClient* pending) const{
+bool Server::isReadyForRegistration(std::vector<std::string> tokens, PendingClient* pending) const{
 	std::string pwd = password;
-	pending->handleRegistration(buff, pwd, users, pending_users);
+	pending->handleRegistration(tokens, pwd, users, pending_users);
 	if (pending->get_username_set() && pending->get_nickname_set() && pending->get_password_set()  && pending->get_nickname_valid() && pending->get_password_valid() && pending->get_hostname_set() && pending->get_servername_set() && pending->get_realname_set())
 		return true;
 	return false;
 }
 
-void PendingClient::handleRegistration(std::string& buff, std::string& password, std::vector <User> users, std::vector <PendingClient> pendingUsers){
-	std::vector<std::string> tokens = splitBySpace(buff);
+void PendingClient::handleRegistration(std::vector<std::string> tokens, std::string& password, std::vector <User> users, std::vector <PendingClient> pendingUsers){
 	if (tokens.empty())
 		return;
 	std::string command = parsse(tokens[0]);

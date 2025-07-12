@@ -60,13 +60,16 @@ void Server::start_server()
 					if (pending)
 					{
 						std::string save1 = buff;
-						if (isReadyForRegistration(save1, pending))
-						{
-							std::string msg = "Welcome to the Internet Relay Network " + pending->getNickname() + "!" + pending->getUsername() + "@" + pending->getUsername();
-							sendReply(pending->get_fd(), RPL_WELCOME(pending->getUsername(), msg));
-							User new_user(pending->get_fd(), pending->getUsername(), pending->getHostname(), pending->getServername(), pending->getRealname(), pending->getNickname());
-							users.push_back(new_user);
-							remove_pending_client(pending->get_fd());
+						std::vector<std::string> tokens = splitByLine(save1);
+						for (int i = 0; i < tokens.size(); ++i){
+							if (isReadyForRegistration(splitBySpace(tokens[i]), pending))
+							{
+								std::string msg = "Welcome to the Internet Relay Network " + pending->getNickname() + "!" + pending->getUsername() + "@" + pending->getUsername();
+								sendReply(pending->get_fd(), RPL_WELCOME(pending->getUsername(), msg));
+								User new_user(pending->get_fd(), pending->getUsername(), pending->getHostname(), pending->getServername(), pending->getRealname(), pending->getNickname());
+								users.push_back(new_user);
+								remove_pending_client(pending->get_fd());
+							}
 						}
 					}
 					else if (user)
@@ -155,7 +158,6 @@ void call_boot(User *user)
 }
 
 void Server::dealWIthUser(std::string& buff, User* user){
-	// std::cout << "(" << buff<< ")" << std::endl;
 	std::vector<std::string> tokens = splitBySpace(buff);
 	if (tokens.empty())
 		return;

@@ -11,7 +11,6 @@ void Server::joinCmd(std::vector<std::string> tokens, User* user) {
 	std::string command = tokens[0];
 	if (tokens.size() < 2){
 		sendReply(user->get_fd(), ERR_NEEDMOREPARAMS(command));
-		std::cout << "hh" << tokens.size() << std::endl;
 		return ;
 	}
 	if (tokens.size() >= 3)
@@ -28,6 +27,10 @@ void Server::joinCmd(std::vector<std::string> tokens, User* user) {
 		if (checkChannelName(name)){
 			Channel* channel = getChannel(name, key);
 			channel->handleJoinCommand(user, key, users);
+		}
+		else{
+			sendReply(user->get_fd(), ERR_NEEDMOREPARAMS(command));
+			return ;
 		}
 	}
 }
@@ -65,9 +68,9 @@ void Channel::addUser(User* user, const std::string& key, std::vector <User>& us
 		sendReply(user->get_fd(), RPL_TOPIC(user->getUsername(), name, topic));
 	else
 		sendReply(user->get_fd(), RPL_NOTOPIC(user->getUsername(), name));
-	sendReply(user->get_fd(), RPL_JOINMSG(user->getHostname(), "127.0.0.1", name));
+	// sendReply(user->get_fd(), RPL_JOINMSG(user->getHostname(), "127.0.0.1", name));
 	sendReply(user->get_fd(), RPL_NAMREPLY(user->getNickname(), name, getUserList(users)));
-	// sendReply(user->get_fd(), RPL_ENDOFNAMES(user->getNickname(), name));
+	sendReply(user->get_fd(), RPL_ENDOFNAMES(user->getNickname(), name));
 	if (justCreated){
 		addOperator(user->get_fd());
 		justCreated = false;

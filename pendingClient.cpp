@@ -196,6 +196,25 @@ std::vector<std::string> splitByComma(const std::string& input) {
 	return tokens;
 }
 
+std::vector<std::string> splitByLine(const std::string& input) {
+	std::vector<std::string> tokens;
+	std::string token;
+	for (size_t i = 0; i < input.length(); ++i) {
+		if (input[i] == '\n' || input[i] == '\r') {
+			if (!token.empty()) {
+				tokens.push_back(token);
+				token.clear();
+			}
+		} else {
+			token += input[i];
+		}
+	}
+	if (!token.empty()) {
+		tokens.push_back(token);
+	}
+	return tokens;
+}
+
 void sendReply(int fd, std::string reply) {
     send(fd, reply.c_str(), strlen(reply.c_str()), 0);
 }
@@ -208,5 +227,5 @@ std::string& parsse(std::string& str) {
 }
 
 bool checkChannelName(std::string& name){
-	return (name[0] == '#' || name[0] == '&');
+	return ((name[0] == '#' || name[0] == '&') && name.size() > 1);
 }

@@ -129,7 +129,6 @@ void Channel::handleInviteMode(std::vector<std::string> tokens, User* user,  std
 		sendReply(user->get_fd(), ERR_INVALIDMODEPARM(name, mode));
 		return ;
 	}
-	std::cout << "(" << mode[0] << ")" << std::endl;
 	if (mode[0] == '+'){
 		inviteOnly = true;
 		sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), name, "+i", std::string("")));

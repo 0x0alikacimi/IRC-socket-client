@@ -27,7 +27,7 @@ class Server
 		void remove_user(int fd);
 		void pending_to_user(PendingClient *client);
 
-		bool isReadyForRegistration(std::string& comand, PendingClient* pending) const;
+		bool isReadyForRegistration(std::vector<std::string> tokens, PendingClient* pending) const;
 
 		void dealWIthUser(std::string& buff, User* user);
 		Channel* getChannel(std::string& name, std::string& key);
