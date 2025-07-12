@@ -34,6 +34,7 @@ class Server
 		Channel* getChannelName(std::string& delChannel);
 		User* getDelUser(std::string& name);
 		User* getUserByfd(std::string& name);
+		User* Server::getUserByFd(int fd);
 
 		void joinCmd(std::vector<std::string> tokens, User* user);
 		void kickCmd(std::vector<std::string> tokens, User* user);

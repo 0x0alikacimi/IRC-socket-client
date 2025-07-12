@@ -138,6 +138,14 @@ User* Server::getDelUser(std::string& name){
 	return NULL;
 }
 
+User* Server::getUserByFd(int fd){
+	std::vector <User>::iterator it = users.begin();
+	for (; it != users.end(); ++it)
+		if (it->get_fd() == fd)
+			return &(*it);
+	return NULL;
+}
+
 void call_boot(User *user)
 {
 	std::time_t t = std::time(NULL);
