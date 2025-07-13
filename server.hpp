@@ -6,6 +6,8 @@
 #include "user.hpp"
 #include "channel.hpp"
 
+bool sig_serv = true;
+
 class Server
 {
 	private :

@@ -11,7 +11,7 @@ void Server::start_server()
 	struct sockaddr_in client_addr;
 	socklen_t client_len = sizeof(client_addr);
 
-	while (true)
+	while (sig_serv == true)
 	{
 		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
 		if (check_poll < 0)
