@@ -19,7 +19,8 @@ void call_bot(std::string buff, int cl_fd)
 	std::string str_time = std::ctime(&t);
 	std::string name = buff;
 	std::string bot_name = "bot";
-	std::string rep = RPL_PRIVMSG(bot_name, name, str_time);
+	// std::string rep = RPL_PRIVMSG(bot_name, name, str_time);
+	std::string rep = "PRIVMSG " + name + " " + str_time;
 	send_msg(cl_fd, rep);
 }
 
@@ -43,7 +44,7 @@ int main(int ac, char **av)
 		sockaddr_in server_add;
 		std::memset(&server_add, 0, sizeof(server_add));
 		server_add.sin_family = AF_INET;
-		server_add.sin_port = htons(por);
+		server_add.sin_port = htons(port);
 		server_add.sin_addr.s_addr = inet_addr("127.0.0.1");/**/
 		if (connect(client_fd, (sockaddr *)&server_add, sizeof(server_add)) < 0)
 		{

@@ -172,7 +172,7 @@ void Server::dealWIthUser(std::string& buff, User* user){
 		inviteCmd(tokens, user);
 	}
 	else if (command == "PRIVMSG"){
-		// handlePrivateMessage(tokens, users, user);s
+		// handlePrivateMessage(tokens, users, user);
 	}
 	else if (command == "TOPIC"){
 		topicCmd(tokens, user);
