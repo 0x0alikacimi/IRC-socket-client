@@ -55,3 +55,15 @@ int User::getNbrChannels() const{
 void User::plusChannel() {
 	nbrChannels++ ;
 }
+
+const std::string User::getBuffer() const{
+	return buffer;
+}
+
+void User::setBuffer(std::string buffer){
+	this->buffer += buffer;
+}
+
+void User::setBufferEmpty(){
+	this->buffer = "";
+}

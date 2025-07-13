@@ -25,6 +25,7 @@ class User
 		std::string servername;
 		std::string realname;
 		std::string nickname;
+		std::string buffer;
 		int user_fd;
 		int nbrChannels;
 	public :
@@ -35,6 +36,9 @@ class User
 		const std::string getServername() const;
 		const std::string getRealname() const;
 		const std::string getNickname() const;
+		const std::string getBuffer() const;
+		void setBufferEmpty();
+		void setBuffer(std::string buffer);
 		int getNbrChannels() const;
 		void plusChannel() ;
 

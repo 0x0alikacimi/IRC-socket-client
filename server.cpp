@@ -11,7 +11,7 @@ void Server::start_server()
 	struct sockaddr_in client_addr;
 	socklen_t client_len = sizeof(client_addr);
 
-	while (sig_serv == true)
+	while (true)
 	{
 		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
 		if (check_poll < 0)
@@ -56,26 +56,37 @@ void Server::start_server()
 					buff[n] = '\0';
 					PendingClient *pending = look_for_pending(pfds[i].fd);
 					User *user = look_for_user(pfds[i].fd);
-
 					if (pending)
 					{
-						std::string save1 = buff;
-						std::vector<std::string> tokens = splitByLine(save1);
-						for (int i = 0; i < tokens.size(); ++i){
-							if (isReadyForRegistration(splitBySpace(tokens[i]), pending))
-							{
-								std::string msg = "Welcome to the Internet Relay Network " + pending->getNickname() + "!" + pending->getUsername() + "@" + pending->getUsername();
-								sendReply(pending->get_fd(), RPL_WELCOME(pending->getUsername(), msg));
-								User new_user(pending->get_fd(), pending->getUsername(), pending->getHostname(), pending->getServername(), pending->getRealname(), pending->getNickname());
-								users.push_back(new_user);
-								remove_pending_client(pending->get_fd());
+						std::string save1 = pending->getBuffer();
+						save1 += buff;
+						if (save1.find('\n') != std::string::npos){
+							pending->setBufferEmpty();
+							std::vector<std::string> tokens = splitByLine(save1);
+							for (int i = 0; i < tokens.size(); ++i){
+								if (isReadyForRegistration(splitBySpace(tokens[i]), pending))
+								{
+									std::string msg = "Welcome to the Internet Relay Network " + pending->getNickname() + "!" + pending->getUsername() + "@" + pending->getUsername();
+									sendReply(pending->get_fd(), RPL_WELCOME(pending->getUsername(), msg));
+									User new_user(pending->get_fd(), pending->getUsername(), pending->getHostname(), pending->getServername(), pending->getRealname(), pending->getNickname());
+									users.push_back(new_user);
+									remove_pending_client(pending->get_fd());
+								}
 							}
 						}
+						else
+							pending->setBuffer(buff);
 					}
 					else if (user)
 					{
-						std::string save2 = buff;
-						dealWIthUser(save2, user);
+						std::string save2 = user->getBuffer();
+						save2 += buff;
+						if (save2.find('\n') != std::string::npos){
+							user->setBufferEmpty();
+							dealWIthUser(save2, user);
+						}
+						else
+							user->setBuffer(buff);
 					}
 				}
 			}

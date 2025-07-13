@@ -11,6 +11,7 @@ class PendingClient{
 		std::string realname;
 		std::string nickname;
 		std::string password;
+		std::string buffer;
 		int user_fd;
 
 		bool password_set;
@@ -32,6 +33,10 @@ class PendingClient{
 		const std::string getRealname() const;
 		const std::string getNickname() const;
 		const std::string getPassword() const;
+		const std::string getBuffer() const;
+		void setBufferEmpty();
+		void setBuffer(std::string buffer);
+
 
 		int get_fd() const;
 		bool get_username_set() const;

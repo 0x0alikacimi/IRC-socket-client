@@ -243,3 +243,16 @@ const std::string getIpadd(int client_fd){
     return "unknown";
 }
 
+const std::string PendingClient::getBuffer() const{
+	return buffer;
+}
+
+void PendingClient::setBuffer(std::string buffer){
+	this->buffer += buffer;
+}
+
+void PendingClient::setBufferEmpty(){
+	this->buffer = "";
+}
+
+
