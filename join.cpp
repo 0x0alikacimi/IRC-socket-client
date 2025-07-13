@@ -68,12 +68,12 @@ void Channel::addUser(User* user, const std::string& key, std::vector <User>& us
 		sendReply(user->get_fd(), RPL_TOPIC(user->getUsername(), name, topic));
 	else
 		sendReply(user->get_fd(), RPL_NOTOPIC(user->getUsername(), name));
-	// sendReply(user->get_fd(), RPL_JOINMSG(user->getHostname(), "127.0.0.1", name));
-	sendReply(user->get_fd(), RPL_NAMREPLY(user->getNickname(), name, getUserList(users)));
-	sendReply(user->get_fd(), RPL_ENDOFNAMES(user->getNickname(), name));
 	if (justCreated){
 		addOperator(user->get_fd());
 		justCreated = false;
 	}
+	std::cout << getUserList(users) << std::endl;
+	sendReply(user->get_fd(), RPL_NAMREPLY(user->getNickname(), name, getUserList(users)));
+	sendReply(user->get_fd(), RPL_ENDOFNAMES(user->getNickname(), name));
 }
 
