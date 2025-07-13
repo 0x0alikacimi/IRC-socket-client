@@ -41,8 +41,10 @@ void Channel::handleKickCommand(User* user, User* delUser, std::string& delComme
 		sendReply(user->get_fd(), ERR_USERNOTINCHANNEL(delUser->getNickname(), name));
 		return ;
 	}
-	sendReply(user->get_fd(), RPL_KICK(user->getNickname(), name, delUser->getNickname(), delComment));
 	removeUser(delUser->get_fd());
+	for (std::vector<int>::iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+		sendReply(it[0], RPL_KICK(user->getNickname(), name, delUser->getNickname(), delComment));
+	}
 }
 
 void Channel::removeUser(int user_fd) {

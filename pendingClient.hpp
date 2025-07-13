@@ -73,5 +73,6 @@ class PendingClient{
 	bool checkChannelName(std::string& name);
 	std::string& parsse(std::string& std);
 	void sendReply(int fd, std::string reply);
+	const std::string getIpadd(int client_fd);
 
 #endif

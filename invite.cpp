@@ -36,5 +36,8 @@ void Server::inviteCmd(std::vector<std::string> tokens, User* user){
 	}
 	channel->addInvited(invitedUser->get_fd());
 	sendReply(user->get_fd(), RPL_INVITING(user->getNickname(), nickname, channel->getName()));
-	sendReply(invitedUser->get_fd(), RPL_INVITE(user->getNickname(), nickname, channel->getName()));
+	std::vector<int> users_fd = channel->getUsers_fd();
+	for (std::vector<int>::iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+		sendReply(it[0], RPL_INVITE(user->getNickname(), nickname, channel->getName()));
+	}
 }

@@ -10,6 +10,10 @@ const std::string& Channel::getName() const{
     return this->name;
 }
 
+const  std::vector <int>& Channel::getUsers_fd() const{
+	return users_fd;
+}
+
 const std::string& Channel::getTopic() const{
     return this->topic;
 }

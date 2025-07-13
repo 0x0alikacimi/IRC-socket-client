@@ -1,5 +1,5 @@
-#include "channel.hpp"
 #include "user.hpp"
+#include "channel.hpp"
 #include "replies.hpp"
 #include "pendingClient.hpp"
 #include "server.hpp"
@@ -124,18 +124,22 @@ void Channel::handleSingleMode(std::vector<std::string> tokens, User* user, User
 	}
 }
 
-void Channel::handleInviteMode(std::vector<std::string> tokens, User* user,  std::string mode){
+void Channel::handleInviteMode(std::vector<std::string> tokens, User* user, std::string mode){
 	if (tokens.size() != 3){
 		sendReply(user->get_fd(), ERR_INVALIDMODEPARM(name, mode));
 		return ;
 	}
 	if (mode[0] == '+'){
 		inviteOnly = true;
-		sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), name, "+i", std::string("")));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(std::string(""), name, "+i", std::string("")));
+		}
 	}
 	else if (mode[0] == '-'){
 		inviteOnly = false;
-		sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), name, "-i", std::string("")));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(std::string(""), name, "-i", std::string("")));
+		}
 	}
 	else
 		sendReply(user->get_fd(), ERR_INVALIDMODEPARM(name, mode));
@@ -148,11 +152,15 @@ void Channel::handleTopicMode(std::vector<std::string> tokens, User* user,  std:
 	}
 	if (mode[0] == '+'){
 		topicRest = true;
-		sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), name, "+t", std::string("")));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(std::string(""), name, "+t", std::string("")));
+		}
 	}
 	else if (mode[0] == '-'){
 		topicRest = false;
-		sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), name, "-t", std::string("")));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(std::string(""), name, "-t", std::string("")));
+		}
 	}
 	else
 		sendReply(user->get_fd(), ERR_INVALIDMODEPARM(name, mode));
@@ -161,11 +169,15 @@ void Channel::handleTopicMode(std::vector<std::string> tokens, User* user,  std:
 void Channel::handleLimitMode(std::vector<std::string> tokens, User* user,  std::string mode){
 	if (mode[0] == '+' && tokens.size() == 4 && atoi(parsse(tokens[3]).c_str())){
 		maxUsers = atoi(parsse(tokens[3]).c_str());
-		sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), name, "+l", std::string("")));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(std::string(""), name, "+l", std::string("")));
+		}
 	}
 	else if (mode[0] == '-' && tokens.size() == 3){
 		maxUsers = MAX_GLOBAL_USERS;
-		sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), name, "-l", std::string("")));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(std::string(""), name, "-l", std::string("")));
+		}
 	}
 	else
 		sendReply(user->get_fd(), ERR_INVALIDMODEPARM(name, mode));
@@ -174,11 +186,15 @@ void Channel::handleLimitMode(std::vector<std::string> tokens, User* user,  std:
 void Channel::handleKeyMode(std::vector<std::string> tokens, User* user,  std::string mode){
 	if (mode[0] == '+' && tokens.size() == 4){
 		key = parsse(tokens[3]);
-		sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), name, "+k", key));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(std::string(""), name, "+k", key));
+		}
 	}
 	else if (mode[0] == '-' && tokens.size() == 3){
 		key = std::string("");
-		sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), name, "-k", std::string("")));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(std::string(""), name, "-k", std::string("")));
+		}
 	}
 	else
 		sendReply(user->get_fd(), ERR_INVALIDMODEPARM(name, mode));
@@ -195,11 +211,15 @@ void Channel::handleOperatorMode(std::vector<std::string> tokens, User* user, Us
 			return ;
 		}
 		addOperator(opUser->get_fd());
-		sendReply(user->get_fd(), RPL_UMODEIS(opUser->getHostname(), name, "+o", user->getNickname()));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(opUser->getHostname(), name, "+o", user->getNickname()));
+		}
 	}
 	else if (mode[0] == '-' && tokens.size() == 4){
 		removeOperator(opUser->get_fd());
-		sendReply(user->get_fd(), RPL_UMODEIS(opUser->getHostname(), name, "-o", user->getNickname()));
+		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+			sendReply(*it, RPL_UMODEIS(opUser->getHostname(), name, "-o", user->getNickname()));
+		}
 	}
 	else {
 		sendReply(user->get_fd(), ERR_INVALIDMODEPARM(name, mode));
@@ -214,20 +234,28 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 		for (int i = 1; i < mode.size(); i++){
 			if (mode[i] == 'i'){
 				channel->setInviteOnly(true);
-				sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), channel->getName(), "+i", std::string("")));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "+i", std::string("")));
+				}
 			}
 			else if (mode[i] == 't'){
 				channel->setTopicRest(true);
-				sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), channel->getName(), "+t", std::string("")));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "+t", std::string("")));
+				}
 			}
 			else if (mode[i] == 'l'){
 				channel->setMaxUsers(atoi(parsse(tokens[3 + curr]).c_str()));
-				sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), channel->getName(), "+l", std::string("")));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "+l", std::string("")));
+				}
 				curr++;
 			}
 			else if (mode[i] == 'k'){
 				channel->setKey(parsse(tokens[3 + curr]));
-				sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), channel->getName(), "+k", channel->getKey()));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "+k", channel->getKey()));
+				}
 				curr++;
 			}
 			else if (mode[i] == 'o'){
@@ -241,7 +269,9 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 					continue ;
 				}
 				channel->addOperator(opUser->get_fd());
-				sendReply(user->get_fd(), RPL_UMODEIS(opUser->getHostname(), channel->getName(), "+o", user->getNickname()));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(opUser->getHostname(), channel->getName(), "+o", user->getNickname()));
+				}
 				curr++;
 			}
 		}
@@ -250,20 +280,28 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 		for (int i = 1; i < mode.size(); i++){
 			if (mode[i] == 'i'){
 				channel->setInviteOnly(false);
-				sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), channel->getName(), "-i", std::string("")));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "-i", std::string("")));
+				}
 			}
 			else if (mode[i] == 't'){
 				channel->setTopicRest(false);
-				sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), channel->getName(), "-t", std::string("")));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "-t", std::string("")));
+				}
 			}
 			else if (mode[i] == 'l'){
 				channel->setMaxUsers(MAX_GLOBAL_USERS);
-				sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), channel->getName(), "-l", std::string("")));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "-l", std::string("")));
+				}
 			}
 			else if (mode[i] == 'k'){
 				std::string key = "";
 				channel->setKey(key);
-				sendReply(user->get_fd(), RPL_UMODEIS(std::string(""), channel->getName(), "-k", channel->getKey()));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "-k", channel->getKey()));
+				}
 			}
 			else if (mode[i] == 'o'){
 				User* opUser = getDelUser(parsse(tokens[3 + curr]));
@@ -276,7 +314,9 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 					continue ;
 				}
 				channel->removeOperator(opUser->get_fd());
-				sendReply(user->get_fd(), RPL_UMODEIS(opUser->getHostname(), channel->getName(), "-o", user->getNickname()));
+				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+					sendReply(*it, RPL_UMODEIS(opUser->getHostname(), channel->getName(), "-o", user->getNickname()));
+				}
 				curr++;
 			}
 		}

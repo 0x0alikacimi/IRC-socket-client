@@ -229,3 +229,17 @@ std::string& parsse(std::string& str) {
 bool checkChannelName(std::string& name){
 	return ((name[0] == '#' || name[0] == '&') && name.size() > 1);
 }
+
+const std::string getIpadd(int client_fd){
+	struct sockaddr_in addr;
+    socklen_t addr_len = sizeof(addr);
+    char ip[INET_ADDRSTRLEN];
+    if (getpeername(client_fd, (struct sockaddr*)&addr, &addr_len) == -1) {
+        return "unknown";
+    }
+    std::string ipStr = inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
+    if (!ipStr.empty())
+        return ip;
+    return "unknown";
+}
+

@@ -63,17 +63,17 @@ void Channel::addUser(User* user, const std::string& key, std::vector <User>& us
     users_fd.push_back(user->get_fd());
 	currentUsers++;
 	user->plusChannel();
-	sendReply(user->get_fd(), RPL_JOIN(user->getUsername(), name));
-	if (topic != "")
-		sendReply(user->get_fd(), RPL_TOPIC(user->getUsername(), name, topic));
-	else
-		sendReply(user->get_fd(), RPL_NOTOPIC(user->getUsername(), name));
 	if (justCreated){
 		addOperator(user->get_fd());
 		justCreated = false;
 	}
-	std::cout << getUserList(users) << std::endl;
+	if (topic != "")
+		sendReply(user->get_fd(), RPL_TOPIC(user->getUsername(), name, topic));
+	else
+		sendReply(user->get_fd(), RPL_NOTOPIC(user->getUsername(), name));
+	for (std::vector<int>::iterator it = users_fd.begin(); it != users_fd.end(); ++it){
+		sendReply(it[0], RPL_JOIN(user->getUsername(), name));
+	}
 	sendReply(user->get_fd(), RPL_NAMREPLY(user->getNickname(), name, getUserList(users)));
 	sendReply(user->get_fd(), RPL_ENDOFNAMES(user->getNickname(), name));
 }
-

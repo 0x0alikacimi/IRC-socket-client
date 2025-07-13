@@ -25,6 +25,7 @@ class Channel{
         const std::string& getName() const;
         const std::string& getTopic() const;
         const std::string& getKey() const;
+		const  std::vector <int>& getUsers_fd() const;
 		const bool getTopicRest() const ;
 
         void setTopic(const std::string& topic);
