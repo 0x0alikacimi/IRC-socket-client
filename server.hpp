@@ -6,8 +6,6 @@
 #include "user.hpp"
 #include "channel.hpp"
 
-extern bool sig_serv = true;
-
 class Server
 {
 	private :
@@ -18,6 +16,8 @@ class Server
 		std::vector <Channel> channels;
 		std::string password;
 	public :
+		static bool sig_serv;
+		static void sig_handler(int sig);
 		Server(int port, std::string password);
 		void start_server();
 		User *look_for_user(int fd);
@@ -46,23 +46,10 @@ class Server
 
 		void handleMultipleModes(Channel* channel, std::vector<std::string> tokens, User* user, std::string mode);
 
-		void handlePrivateMessage(std::vector<std::string> tokens, std::vector<User> users, std::vector<Channel> &channels, User *sender);
+		void handlePrivateMessage(std::vector<std::string> tokens, std::vector<User> &users, std::vector<Channel> &channels, User *sender);
 		void to_user(User sender, std::string msg, std::string target, std::vector<User> users);
 		void to_channel(User sender, std::string msg,std::string target, std::vector <Channel> cha);
 		void deal_with_bot(User sender, std::string msg);
 };
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

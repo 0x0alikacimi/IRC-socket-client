@@ -133,7 +133,7 @@ void Server::deal_with_bot(User sender, std::string msg)
 }
 
 
-void Server::handlePrivateMessage(std::vector<std::string> tokens, std::vector<User> users, std::vector<Channel> &channels, User *sender)
+void Server::handlePrivateMessage(std::vector<std::string> tokens, std::vector<User> &users, std::vector<Channel> &channels, User *sender)
 {
 	std::string msg;
 	std::string target;
@@ -174,6 +174,3 @@ void Server::handlePrivateMessage(std::vector<std::string> tokens, std::vector<U
 	}
 
 }
-
-
-

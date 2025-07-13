@@ -1,6 +1,13 @@
 #include "server.hpp"
 #include "replies.hpp"
 
+bool Server::sig_serv = true;
+
+void Server::sig_handler(int sig)
+{
+	Server::sig_serv = false;
+}
+
 void Server::start_server()
 {
 	std::cout << "srever is lestenning to port : " << port << "\n" << std::endl;
@@ -11,7 +18,7 @@ void Server::start_server()
 	struct sockaddr_in client_addr;
 	socklen_t client_len = sizeof(client_addr);
 
-	while (true)
+	while (Server::sig_serv)
 	{
 		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
 		if (check_poll < 0)
@@ -183,7 +190,7 @@ void Server::dealWIthUser(std::string& buff, User* user){
 		inviteCmd(tokens, user);
 	}
 	else if (command == "PRIVMSG"){
-		// handlePrivateMessage(tokens, users, user);
+		handlePrivateMessage(tokens, users, channels, user);
 	}
 	else if (command == "TOPIC"){
 		topicCmd(tokens, user);

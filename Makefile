@@ -2,7 +2,7 @@ NAME = ircserv
 NAME_BONUS = bot
 
 
-SRC_FILES = user.cpp helpers.cpp main.cpp pendingClient.cpp server.cpp channel.cpp join.cpp kick.cpp authetification.cpp invite.cpp topic.cpp mode.cpp
+SRC_FILES = user.cpp helpers.cpp main.cpp pendingClient.cpp server.cpp channel.cpp join.cpp kick.cpp authetification.cpp invite.cpp topic.cpp mode.cpp private_msg.cpp
 SRC_FILES_BONUS = bonus/bot.cpp
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 OBJ_FILES_BONUS = $(SRC_FILES_BONUS:.cpp=.o)

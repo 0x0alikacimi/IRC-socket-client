@@ -1,18 +1,13 @@
 #include "server.hpp"
 
-void sig_handler(int sig)
-{
-	sig_serv = false;
-}
-
 int main (int ac , char **av)
 {
 	if (ac == 3)
 	{
 		try
 		{
-			signal(SIGQUIT, sig_handler);
-			signal(SIGINT, sig_handler);
+			signal(SIGQUIT, Server::sig_handler);
+			signal(SIGINT, Server::sig_handler);
 			signal(SIGPIPE, SIG_IGN);
 			int port = std::atoi(av[1]);
 			if (port <= 0 || port >= 65535)
