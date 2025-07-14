@@ -11,7 +11,7 @@ std::vector<std::string> get_recs(std::string &receiversToken)
 {
 	std::vector<std::string> tokens;
 	std::string tkn;
-	int i = 0;
+	size_t i = 0;
 	while (i < receiversToken.length())
 	{
 		if (receiversToken[i] == ',')
@@ -35,7 +35,7 @@ void Server::to_user(User sender, std::string msg, std::string target, std::vect
 {
 	std::string rep_msg;
 	bool found = false;
-	int i = 0;
+	size_t i = 0;
 	while(i < users.size())
 	{
 		if (target == users[i].getNickname())
@@ -67,7 +67,7 @@ void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User>
 		if(u)
 		{
 			rep_msg = RPL_PRIVMSG(sender.getNickname(), u->getNickname(), msg);
-			send_msg(users_fd[i], msg);
+			send_msg(users_fd[i], rep_msg);
 		}
 		i++;
 	}
@@ -76,7 +76,7 @@ void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User>
 void Server::to_channel(User sender, std::string msg,std::string target, std::vector <Channel> cha)
 {
 	std::string rep_msg;
-	int i = 0;
+	size_t i = 0;
 	bool found = false;
 	while (i < cha.size())
 	{
@@ -126,7 +126,7 @@ void Server::deal_with_bot(User sender, std::string msg)
 	}
 	else
 	{
-		std::string invalid = "invalid option for bot";
+		std::string invalid = msg + "is an invalid option for bot\n";
 		rep_msg = RPL_PRIVMSG(sender.getNickname() , sender.getNickname(), invalid);
 		send_msg(sender.get_fd(), rep_msg);
 	}
@@ -156,7 +156,7 @@ void Server::handlePrivateMessage(std::vector<std::string> tokens, std::vector<U
 	for (size_t i = 3; i < tokens.size(); ++i)
 		msg += " " + tokens[i];
 
-	int i = 0;
+	size_t i = 0;
 	while (i < vec_recipients.size())
 	{
 		target = vec_recipients[i];
@@ -168,7 +168,8 @@ void Server::handlePrivateMessage(std::vector<std::string> tokens, std::vector<U
 		{
 			if (target == "bot")
 				deal_with_bot(*sender, msg);
-			to_user(*sender , msg, target, users);
+			else
+				to_user(*sender , msg, target, users);
 		}
 		i++;
 	}

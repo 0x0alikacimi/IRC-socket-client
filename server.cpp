@@ -23,7 +23,6 @@ void Server::start_server()
 		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
 		if (check_poll < 0)
 		{
-			std::cerr << "poll " << std::endl;
 			break;
 		}
 		if (pfds[0].revents & POLLIN)
@@ -42,7 +41,7 @@ void Server::start_server()
 			std::cout << "New client connected, waiting for authentication..." << std::endl;
 		}
 
-		int i = 1;
+		size_t i = 1;
 		while(i < pfds.size())
 		{
 			if (pfds[i].revents & POLLIN)
@@ -100,6 +99,14 @@ void Server::start_server()
 			i++;
 		}
 	}
+	size_t k = 0;
+	while (k < pfds.size())
+	{
+		if (pfds[k].fd >= 0)
+			close(pfds[k].fd);
+		k++;
+	}
+	pfds.clear();
 	close(server_fd);
 }
 
@@ -167,14 +174,6 @@ User* Server::getUserByFd(int fd){
 	return NULL;
 }
 
-void call_boot(User *user)
-{
-	std::time_t t = std::time(NULL);
-	std::string str_time = std::ctime(&t);
-	std::string rep_msg = RPL_PRIVMSG(user->getNickname(), user->getNickname(), str_time);
-	sendReply(user->get_fd(), rep_msg);
-}
-
 void Server::dealWIthUser(std::string& buff, User* user){
 	std::vector<std::string> tokens = splitBySpace(buff);
 	if (tokens.empty())
@@ -203,10 +202,6 @@ void Server::dealWIthUser(std::string& buff, User* user){
 	}
 	else if (command == "USER" && tokens.size() == 2){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
-	}
-	else if (command == "TIME")
-	{
-		call_boot(user);
 	}
 	else {
 	}

@@ -19,7 +19,6 @@ void call_bot(std::string buff, int cl_fd)
 	std::string str_time = std::ctime(&t);
 	std::string name = buff;
 	std::string bot_name = "bot";
-	// std::string rep = RPL_PRIVMSG(bot_name, name, str_time);
 	std::string rep = "PRIVMSG " + name + " " + str_time;
 	send_msg(cl_fd, rep);
 }

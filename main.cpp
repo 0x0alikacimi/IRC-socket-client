@@ -10,7 +10,7 @@ int main (int ac , char **av)
 			signal(SIGINT, Server::sig_handler);
 			signal(SIGPIPE, SIG_IGN);
 			int port = std::atoi(av[1]);
-			if (port <= 0 || port >= 65535)
+			if (port <= 0 || port > 65535)
 			{
 				std::cerr << "invalid port number" << std::endl;
 				return 1;
