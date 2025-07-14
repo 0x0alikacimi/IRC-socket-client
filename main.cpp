@@ -1,5 +1,18 @@
 #include "server.hpp"
 
+bool valid(std::string str)
+{
+	size_t i = 0;
+	while (str[i])
+	{
+		if (str[i] != ' ' || str[i] != '	')
+			return (false);
+		i++;
+	}
+	return (true);
+}
+
+
 int main (int ac , char **av)
 {
 	if (ac == 3)
@@ -16,7 +29,7 @@ int main (int ac , char **av)
 				return 1;
 			}
 			std::string password = av[2];
-			if (password.size() < 3)
+			if (password.size() < 3 || !valid(password))
 			{
 				std::cerr << "invalid password " << std::endl;
 				return 1;

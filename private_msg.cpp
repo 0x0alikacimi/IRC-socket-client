@@ -57,6 +57,19 @@ void Server::to_user(User sender, std::string msg, std::string target, std::vect
 	}
 }
 
+const std::string getIpadd(int client_fd)
+{
+		struct sockaddr_in addr;
+		socklen_t addr_len = sizeof(addr);
+		char ip[INET_ADDRSTRLEN];
+		if (getpeername(client_fd, (struct sockaddr*)&addr, &addr_len) == -1)
+			return "unknown";
+		std::string ipStr = inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
+		if (!ipStr.empty())
+			return ip;
+		return "unknown";
+}
+
 void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User> users)
 {
 	std::string rep_msg;
@@ -66,7 +79,7 @@ void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User>
 		User *u = getUserByfd(users_fd[i], users);
 		if(u)
 		{
-			rep_msg = RPL_PRIVMSG(sender.getNickname(), u->getNickname(), msg);
+			rep_msg = ":" + sender.getNickname() + "!" + sender.getUsername() + "@" + getIpadd(sender.get_fd()) + " PRIVMSG " + u->getNickname() + " :" + msg + "\r\n";
 			send_msg(users_fd[i], rep_msg);
 		}
 		i++;
