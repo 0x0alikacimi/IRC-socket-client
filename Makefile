@@ -10,7 +10,8 @@ OBJ_FILES_BONUS = $(SRC_FILES_BONUS:.cpp=.o)
 HEADERS = server.hpp user.hpp pendingClient.cpp channel.hpp
 
 CC = c++
-CFLAGS = #-fsanitize=address -g #-Wall -Wextra -Werror -std=c++98
+#-fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 all : $(NAME)
 

@@ -4,11 +4,10 @@
 
 bool Server::isReadyForRegistration(std::vector<std::string> tokens, PendingClient* pending) const{
 	std::string pwd = password;
-	pending->handleRegistration(tokens, pwd, users, pending_users);
-	if (!pending->get_password_set() || !pending->get_password_valid()){
-		sendReply(pending->get_fd(), ERR_PASSWDMISMATCH(std::string("")));
+	if (!pending->get_password_valid() && tokens[0] != "PASS"){
 		return false;
 	}
+	pending->handleRegistration(tokens, pwd, users, pending_users);
 	if (pending->get_username_set() && pending->get_nickname_set() && pending->get_password_set()  && pending->get_nickname_valid() && pending->get_password_valid() && pending->get_hostname_set() && pending->get_servername_set() && pending->get_realname_set())
 		return true;
 	return false;
@@ -40,7 +39,7 @@ void PendingClient::handleRegistration(std::vector<std::string> tokens, std::str
 			std::string value3 = parsse(tokens[4]);
 			for (size_t i = 5; i < tokens.size(); ++i)
 				value3 += " " + parsse(tokens[i]);
-			handleUserCommand(value, value1, value2, value3, users, pendingUsers);
+			handleUserCommand(value, value1, value2, value3);
 		}
 		else
 			sendReply(user_fd, ERR_NEEDMOREPARAMS(command));
@@ -53,7 +52,7 @@ void PendingClient::handleRegistration(std::vector<std::string> tokens, std::str
 	}
 }
 
-void PendingClient::handleUserCommand(std::string& username, std::string& hostname, std::string& servername, std::string& realname, std::vector <User> users, std::vector <PendingClient> pendingUsers){
+void PendingClient::handleUserCommand(std::string& username, std::string& hostname, std::string& servername, std::string& realname){
 	setUsername(username);
 	setHostname(hostname);
 	setServername(servername);

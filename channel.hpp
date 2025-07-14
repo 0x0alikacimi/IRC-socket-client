@@ -11,10 +11,9 @@ class Channel{
 		bool justCreated;
 		bool inviteOnly;
 		bool requiredKey;
-		bool topicRest;
-		// bool isFull;
 		int maxUsers;
 		int currentUsers;
+		bool topicRest;
         std::vector <int> users_fd;
         std::vector <int> inviteds_fd;
         std::vector <int> operators_fd;
@@ -26,7 +25,7 @@ class Channel{
         const std::string& getTopic() const;
         const std::string& getKey() const;
 		const  std::vector <int>& getUsers_fd() const;
-		const bool getTopicRest() const ;
+		bool getTopicRest() const ;
 
         void setTopic(const std::string& topic);
 		void setTopicRest(bool is);

@@ -89,7 +89,6 @@ void Server::to_channel(User sender, std::string msg,std::string target, std::ve
 	}
 	if (found == true)
 	{
-		bool fuond_user = false;
 		if (cha[i].isUserInChannel(sender.get_fd()))
 		{
 			cha[i].broad_cast_channel(msg, sender, users);

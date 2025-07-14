@@ -5,7 +5,7 @@ int User::get_fd() const{
 	return user_fd;
 }
 
-User::User(int fd, std::string username, std::string hostname, std::string servername, std::string realname, std::string nickname) : user_fd(fd) , username(username), hostname(hostname), servername(servername), realname(realname), nickname(nickname){
+User::User(int fd, std::string username, std::string hostname, std::string servername, std::string realname, std::string nickname) : user_fd(fd) , username(username), hostname(hostname), servername(servername), realname(realname), nickname(nickname), nbrChannels(0){
 }
 
 const std::string User::getNickname() const{

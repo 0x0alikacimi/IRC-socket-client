@@ -5,6 +5,7 @@ bool Server::sig_serv = true;
 
 void Server::sig_handler(int sig)
 {
+	(void)sig;
 	Server::sig_serv = false;
 }
 
@@ -69,11 +70,12 @@ void Server::start_server()
 						if (save1.find('\n') != std::string::npos){
 							pending->setBufferEmpty();
 							std::vector<std::string> tokens = splitByLine(save1);
-							for (int i = 0; i < tokens.size(); ++i){
+							for (size_t i = 0; i < tokens.size(); ++i){
 								if (isReadyForRegistration(splitBySpace(tokens[i]), pending))
 								{
-									std::string msg = "Welcome to the Internet Relay Network " + pending->getNickname() + "!" + pending->getUsername() + "@" + pending->getUsername();
-									sendReply(pending->get_fd(), RPL_WELCOME(pending->getUsername(), msg));
+									std::string msg = "Welcome to the Internet Relay Network " + pending->getNickname() + "!" + pending->getUsername() + "@" + pending->getHostname();
+									sendReply(pending->get_fd(), RPL_WELCOME(pending->getNickname(), msg));
+									std::cout << msg << std::endl;
 									User new_user(pending->get_fd(), pending->getUsername(), pending->getHostname(), pending->getServername(), pending->getRealname(), pending->getNickname());
 									users.push_back(new_user);
 									remove_pending_client(pending->get_fd());

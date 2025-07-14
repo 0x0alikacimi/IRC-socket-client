@@ -78,7 +78,7 @@ void Channel::addInvited(int fd){
 	}
 }
 
-const bool Channel::getTopicRest() const {
+bool Channel::getTopicRest() const {
 	return topicRest;
 }
 

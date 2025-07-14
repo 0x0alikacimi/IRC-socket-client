@@ -25,7 +25,9 @@ void Server::topicCmd(std::vector<std::string> tokens, User* user){
 			sendReply(user->get_fd(), RPL_NOTOPIC(user->getNickname(), channel->getName()));
 			return ;
 		}
-		sendReply(user->get_fd(), RPL_TOPIC(user->getNickname(), channel->getName(), channel->getTopic()));
+		for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+			sendReply(*it, RPL_TOPIC(user->getNickname(), channel->getName(), channel->getTopic()));
+		}
 		return ;
 	}
 	std::string topic;
@@ -39,4 +41,7 @@ void Server::topicCmd(std::vector<std::string> tokens, User* user){
 		return ;
 	}
 	channel->setTopic(topic);
+	for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+		sendReply(*it, RPL_TOPIC(user->getNickname(), channel->getName(), channel->getTopic()));
+	}
 }

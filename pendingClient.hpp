@@ -66,7 +66,7 @@ class PendingClient{
 		bool checkNickname(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers) const;
 
 		void handleRegistration(std::vector<std::string> tokens, std::string& password, std::vector <User> users, std::vector <PendingClient> pendingUsers);
-		void handleUserCommand(std::string& username, std::string& hostname, std::string& servername, std::string& realname, std::vector <User> users, std::vector <PendingClient> pendingUsers);
+		void handleUserCommand(std::string& username, std::string& hostname, std::string& servername, std::string& realname);
 		void handleNickCommand(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers);
 		void handlePassCommand(std::string& password, std::string& truePassword);
 
@@ -78,6 +78,5 @@ class PendingClient{
 	bool checkChannelName(std::string& name);
 	std::string& parsse(std::string& std);
 	void sendReply(int fd, std::string reply);
-	const std::string getIpadd(int client_fd);
 
 #endif

@@ -5,9 +5,9 @@
 #include "server.hpp"
 
 bool checkMode(std::string& mode, std::vector <std::string> tokens, int user_fd, std::string name){
-	int curr = 0;
+	size_t curr = 0;
 	if (mode[0] == '+'){
-		for (int i = 1; i < mode.size(); i++){
+		for (size_t i = 1; i < mode.size(); i++){
 			if (mode[i] == 'o' || mode[i] == 'k' || mode[i] == 'l')
 				curr++;
 			else if (mode[i] != 'i' && mode[i] != 't'){
@@ -30,7 +30,7 @@ bool checkMode(std::string& mode, std::vector <std::string> tokens, int user_fd,
 		return true;
 	}
 	else if (mode[0] == '-'){
-		for (int i = 1; i < mode.size(); i++){
+		for (size_t i = 1; i < mode.size(); i++){
 			if (mode[i] == 'o')
 				curr++;
 			else if (mode[i] != 'i' && mode[i] != 't' && mode[i] != 'k' && mode[i] != 'l'){
@@ -83,7 +83,7 @@ void Server::modeCmd(std::vector<std::string> tokens, User* user){
 		return ;
 	}
 	if (mode.size() == 2){
-		User* opUser;
+		User* opUser = NULL;
 		if (mode[1] == 'o'){
 			if (tokens.size() != 4){
 				sendReply(user->get_fd(), ERR_NEEDMOREPARAMS(command));
@@ -99,7 +99,6 @@ void Server::modeCmd(std::vector<std::string> tokens, User* user){
 		return ;
 	}
 	sendReply(user->get_fd() ,ERR_UNKNOWNMODE(std::string(""), channel->getName() , std::string("")));
-	//error
 }
 
 void Channel::handleSingleMode(std::vector<std::string> tokens, User* user, User* opUser, std::string mode){
@@ -146,7 +145,7 @@ void Channel::handleInviteMode(std::vector<std::string> tokens, User* user, std:
 }
 
 void Channel::handleTopicMode(std::vector<std::string> tokens, User* user,  std::string mode){
-	if (tokens.size() == 3){
+	if (tokens.size() != 3){
 		sendReply(user->get_fd(), ERR_INVALIDMODEPARM(name, mode));
 		return ;
 	}
@@ -231,7 +230,7 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 		return ;
 	int curr = 0;
 	if (mode[0] == '+'){
-		for (int i = 1; i < mode.size(); i++){
+		for (size_t i = 1; i < mode.size(); i++){
 			if (mode[i] == 'i'){
 				channel->setInviteOnly(true);
 				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
@@ -277,7 +276,7 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 		}
 	}
 	else if (mode[0] == '-'){
-		for (int i = 1; i < mode.size(); i++){
+		for (size_t i = 1; i < mode.size(); i++){
 			if (mode[i] == 'i'){
 				channel->setInviteOnly(false);
 				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){

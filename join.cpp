@@ -20,7 +20,7 @@ void Server::joinCmd(std::vector<std::string> tokens, User* user) {
 	for (std::size_t i = 0; i < channelNames.size(); ++i) {
 		std::string name = channelNames[i];
 		std::string key;
-		if (i >= key.size())
+		if (i >= keys.size())
 			key = "";
 		else
 			key = keys[i];
@@ -41,11 +41,11 @@ void Channel::handleJoinCommand(User* user, std::string& key, std::vector <User>
 
 void Channel::addUser(User* user, const std::string& key, std::vector <User>& users){
     if (isUserInChannel(user->get_fd())){
-		sendReply(user->get_fd(), ERR_USERONCHANNEL(user->getUsername(), name));
+		sendReply(user->get_fd(), ERR_USERONCHANNEL(user->getNickname(), name));
         return ;
 	}
 	if (hasKey() && !checkKey(key) && !isInvited(user->get_fd())){
-		sendReply(user->get_fd(), ERR_BADCHANNELKEY(user->getUsername(), name));
+		sendReply(user->get_fd(), ERR_BADCHANNELKEY(user->getNickname(), name));
         return ;
 	}
 	if (inviteOnly && !isInvited(user->get_fd())){
@@ -68,11 +68,11 @@ void Channel::addUser(User* user, const std::string& key, std::vector <User>& us
 		justCreated = false;
 	}
 	if (topic != "")
-		sendReply(user->get_fd(), RPL_TOPIC(user->getUsername(), name, topic));
+		sendReply(user->get_fd(), RPL_TOPIC(user->getNickname(), name, topic));
 	else
-		sendReply(user->get_fd(), RPL_NOTOPIC(user->getUsername(), name));
+		sendReply(user->get_fd(), RPL_NOTOPIC(user->getNickname(), name));
 	for (std::vector<int>::iterator it = users_fd.begin(); it != users_fd.end(); ++it){
-		sendReply(it[0], RPL_JOIN(user->getUsername(), name));
+		sendReply(it[0], RPL_JOIN(user->getNickname(), name));
 	}
 	sendReply(user->get_fd(), RPL_NAMREPLY(user->getNickname(), name, getUserList(users)));
 	sendReply(user->get_fd(), RPL_ENDOFNAMES(user->getNickname(), name));

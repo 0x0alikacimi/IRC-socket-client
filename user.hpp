@@ -20,14 +20,14 @@
 class User
 {
 	private :
+		int user_fd;
 		std::string username;
 		std::string hostname;
 		std::string servername;
 		std::string realname;
 		std::string nickname;
-		std::string buffer;
-		int user_fd;
 		int nbrChannels;
+		std::string buffer;
 	public :
 		User(int fd, std::string username, std::string hostname, std::string servername, std::string realname, std::string nickname);
 		int get_fd() const;
