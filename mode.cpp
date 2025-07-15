@@ -169,7 +169,7 @@ void Channel::handleLimitMode(std::vector<std::string> tokens, User* user,  std:
 	if (mode[0] == '+' && tokens.size() == 4 && atoi(parsse(tokens[3]).c_str())){
 		maxUsers = atoi(parsse(tokens[3]).c_str());
 		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
-			sendReply(*it, RPL_UMODEIS(std::string(""), name, "+l", std::string("")));
+			sendReply(*it, RPL_UMODEIS(std::string(""), name, "+l", tokens[3]));
 		}
 	}
 	else if (mode[0] == '-' && tokens.size() == 3){
@@ -211,7 +211,7 @@ void Channel::handleOperatorMode(std::vector<std::string> tokens, User* user, Us
 		}
 		addOperator(opUser->get_fd());
 		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
-			sendReply(*it, RPL_UMODEIS(opUser->getHostname(), name, "+o", user->getNickname()));
+			sendReply(*it, RPL_UMODEIS(opUser->getHostname(), name, "+o", opUser->getNickname()));
 		}
 	}
 	else if (mode[0] == '-' && tokens.size() == 4){
@@ -246,7 +246,8 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 			else if (mode[i] == 'l'){
 				channel->setMaxUsers(atoi(parsse(tokens[3 + curr]).c_str()));
 				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
-					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "+l", std::string("")));
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "+l", tokens[3 + curr]));
+
 				}
 				curr++;
 			}
@@ -269,7 +270,7 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 				}
 				channel->addOperator(opUser->get_fd());
 				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
-					sendReply(*it, RPL_UMODEIS(opUser->getHostname(), channel->getName(), "+o", user->getNickname()));
+					sendReply(*it, RPL_UMODEIS(opUser->getHostname(), channel->getName(), "+o", opUser->getNickname()));
 				}
 				curr++;
 			}
@@ -299,7 +300,7 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 				std::string key = "";
 				channel->setKey(key);
 				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
-					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "-k", channel->getKey()));
+					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "-k",  std::string("")));
 				}
 			}
 			else if (mode[i] == 'o'){

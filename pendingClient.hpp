@@ -37,7 +37,6 @@ class PendingClient{
 		void setBufferEmpty();
 		void setBuffer(std::string buffer);
 
-
 		int get_fd() const;
 		bool get_username_set() const;
 		bool get_hostname_set() const;

@@ -8,6 +8,7 @@ bool Server::isReadyForRegistration(std::vector<std::string> tokens, PendingClie
         return false;
     }
 	if (!pending->get_password_valid() && tokens[0] != "PASS"){
+		sendReply(pending->get_fd(), ERR_PASSWDMISMATCH(pending->getNickname()));
 		return false;
 	}
 	pending->handleRegistration(tokens, pwd, users, pending_users);
