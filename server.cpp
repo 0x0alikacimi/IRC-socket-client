@@ -21,7 +21,8 @@ void Server::start_server()
 
 	while (Server::sig_serv)
 	{
-		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
+		int check_poll = poll(pfds.data(), pfds.size(), -1);
+		/* 1 blocks indefinitely until at least one socket has some activity */
 		if (check_poll < 0)
 		{
 			break;
@@ -119,7 +120,13 @@ void Server::start_server()
 
 Server::Server(int port, std::string password) : port(port), password(password)
 {
-	server_fd = socket(AF_INET, SOCK_STREAM, DEF_PROTOCOL);
+	/*
+	socket(AF_INET, SOCK_STREAM, 0);
+		This creates a TCP socket using the IPv4 protocol (AF_INET).
+		SOCK_STREAM means we want a reliable, connection-oriented stream (TCP).
+		0 allows the system to choose the appropriate protocol automatically (which is TCP for SOCK_STREAM)
+	*/
+	server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (server_fd == -1)
 		throw std::runtime_error("Failed to create socket");
 
@@ -137,9 +144,13 @@ Server::Server(int port, std::string password) : port(port), password(password)
 
 	if (bind(server_fd, (sockaddr *)&serv_add, sizeof(serv_add)))
 		throw std::runtime_error("Failed to bind socket");
-	if(listen(server_fd, MAX_PENDING))
+
+	/*1 is the backlog queue size (max pending connections waiting).*/
+	if(listen(server_fd, 1))
 		throw std::runtime_error("Failed to listen on socket");
 }
+
+
 
 std::vector <User> Server::getUsers(){
 	return this->users;

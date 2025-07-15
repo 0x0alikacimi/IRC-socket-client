@@ -27,7 +27,6 @@ class Server
 
 		void remove_pending_client(int fd);
 		void remove_user(int fd);
-		void pending_to_user(PendingClient *client);
 
 		bool isReadyForRegistration(std::vector<std::string> tokens, PendingClient* pending) const;
 

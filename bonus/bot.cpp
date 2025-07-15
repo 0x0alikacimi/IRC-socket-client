@@ -17,7 +17,6 @@ void send_registration(int fd, std::string &password, std::string &nick, std::st
 {
 	std::string pass_cmd = "PASS " + password + "\r\n";
 	std::string nick_cmd = "NICK " + nick + "\r\n";
-	// USER <username> <hostname> <servername> :<realname>
 	std::string user_cmd = "USER " + username + " 0 * :" + username + "\r\n";
 
 	send(fd, pass_cmd.c_str(), pass_cmd.size(), 0);
@@ -56,7 +55,7 @@ int main(int ac, char **av)
 		std::memset(&server_add, 0, sizeof(server_add));
 		server_add.sin_family = AF_INET;
 		server_add.sin_port = htons(port);
-		server_add.sin_addr.s_addr = inet_addr("127.0.0.1");/**/
+		server_add.sin_addr.s_addr = inet_addr("127.0.0.1");
 		if (connect(client_fd, (sockaddr *)&server_add, sizeof(server_add)) < 0)
 		{
 			std::cerr << "connect failed" << std::endl;
@@ -89,3 +88,27 @@ int main(int ac, char **av)
 		std::cerr << "Usage: " << av[0] << " <port> <password>" << std::endl;
 	}
 }
+
+/*comments */
+/*
+	socket(AF_INET, SOCK_STREAM, 0);
+		This creates a TCP socket using the IPv4 protocol (AF_INET).
+		SOCK_STREAM means we want a reliable, connection-oriented stream (TCP).
+		0 allows the system to choose the appropriate protocol automatically (which is TCP for SOCK_STREAM)
+
+
+	sin_port = htons(port)
+		converts :
+			host byte order, which depends on the CPU architecture (little-endian or big-endian)
+			to
+			network byte order, which is always big-endian.
+
+
+	server_add.sin_addr.s_addr = inet_addr("127.0.0.1")
+		Converts a human-readable IPv4 address (like "127.0.0.1") to a network-order 32-bit integer
+
+
+	(sockaddr*)&server_add
+		sockaddr doesn't have fields like sin_port or sin_addr
+	(!!!sockaddr_in is designed to be compatible in memory layout with sockaddr, so we can safely cast)
+*/

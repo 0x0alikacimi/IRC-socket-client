@@ -42,6 +42,9 @@ int main (int ac , char **av)
 			std::cerr << e.what() << std::endl;
 			return (1);
 		}
-		return (0);
+	}
+	else
+	{
+		std::cerr << "Usage: " << av[0] << " <port> <password>" << std::endl;
 	}
 }
