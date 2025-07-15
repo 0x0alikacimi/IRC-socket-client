@@ -123,6 +123,8 @@ void Server::deal_with_bot(User sender, std::string msg)
 {
 	std::string bot_name = "bot";
 	std::string rep_msg;
+	if (!msg.empty() && msg[msg.size() - 1] == '\n')
+		msg.erase(msg.size() - 1);
 	if (msg == "TIME")
 	{
 		User *bot_use = this->getDelUser(bot_name);

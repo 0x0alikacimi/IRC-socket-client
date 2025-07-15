@@ -13,6 +13,18 @@ void	send_msg(int fd, std::string  msg)
 	send(fd, msg.c_str(), msg.size(), 0);
 }
 
+void send_registration(int fd, std::string &password, std::string &nick, std::string &username)
+{
+	std::string pass_cmd = "PASS " + password + "\r\n";
+	std::string nick_cmd = "NICK " + nick + "\r\n";
+	// USER <username> <hostname> <servername> :<realname>
+	std::string user_cmd = "USER " + username + " 0 * :" + username + "\r\n";
+
+	send(fd, pass_cmd.c_str(), pass_cmd.size(), 0);
+	send(fd, nick_cmd.c_str(), nick_cmd.size(), 0);
+	send(fd, user_cmd.c_str(), user_cmd.size(), 0);
+}
+
 void call_bot(std::string buff, int cl_fd)
 {
 	std::time_t t = std::time(NULL);
@@ -51,18 +63,29 @@ int main(int ac, char **av)
 			close(client_fd);
 			return 1;
 		}
+		std::string bot_name = "bot";
+		send_registration(client_fd, pass, bot_name, bot_name);
 		std::string msg;
 
 		while(true)
 		{
 			char buffer[1024];
 			int bytes;
-			while ((bytes = recv(client_fd, buffer, sizeof(buffer), 0)) > 0)
+			while ((bytes = read(client_fd, buffer, sizeof(buffer) - 1)) > 0)
 			{
 				buffer[bytes] = '\0';
 				call_bot(buffer, client_fd);
 			}
+			if (bytes <= 0)
+			{
+				std::cout << "Server closed connection" << std::endl;
+				break;
+			}
 		}
 		close(client_fd);
+	}
+	else
+	{
+		std::cerr << "Usage: " << av[0] << " <port> <password>" << std::endl;
 	}
 }

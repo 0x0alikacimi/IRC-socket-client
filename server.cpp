@@ -49,6 +49,11 @@ void Server::start_server()
 			{
 				char buff[1024];
 				int n = read(pfds[i].fd, buff, sizeof(buff) - 1);
+				if (n >= 1023)
+				{
+					n -= 1;
+					buff[n] = '\0';
+				}
 				if (n <= 0)
 				{
 					close (pfds[i].fd);
