@@ -77,9 +77,9 @@ void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User>
 	while (i < currentUsers)
 	{
 		User *u = getUserByfd(users_fd[i], users);
-		if(u)
+		if(u && u->getNickname() != sender.getNickname())
 		{
-			rep_msg = ":" + sender.getNickname() + "!" + sender.getUsername() + "@" + getIpadd(sender.get_fd()) + " PRIVMSG " + u->getNickname() + " :" + msg + "\r\n";
+			rep_msg = ":" + sender.getNickname() + "!" + sender.getUsername() + "@" + getIpadd(sender.get_fd()) + " PRIVMSG " + this->getName() + " :" + msg + "\r\n";
 			send_msg(users_fd[i], rep_msg);
 		}
 		i++;

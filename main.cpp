@@ -5,7 +5,7 @@ bool valid(std::string str)
 	size_t i = 0;
 	while (str[i])
 	{
-		if (str[i] != ' ' || str[i] != '	')
+		if (str[i] == ' ' || str[i] == '	')
 			return (false);
 		i++;
 	}
@@ -23,7 +23,7 @@ int main (int ac , char **av)
 			signal(SIGINT, Server::sig_handler);
 			signal(SIGPIPE, SIG_IGN);
 			int port = std::atoi(av[1]);
-			if (port <= 0 || port > 65535)
+			if (port < 1024 || port > 49151)
 			{
 				std::cerr << "invalid port number" << std::endl;
 				return 1;

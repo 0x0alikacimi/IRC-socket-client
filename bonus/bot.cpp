@@ -29,7 +29,7 @@ int main(int ac, char **av)
 	{
 		std::string pass = av[2];
 		int port = std::atoi(av[1]);
-		if (port < 1024 || port > 65535)
+		if (port < 1024 || port > 49151)
 		{
 			std::cerr << "Invalid port: must be between 1024 and 65535." << std::endl;
 			return 1;
