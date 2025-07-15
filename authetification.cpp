@@ -4,6 +4,9 @@
 
 bool Server::isReadyForRegistration(std::vector<std::string> tokens, PendingClient* pending) const{
 	std::string pwd = password;
+	 if (tokens.empty()) {
+        return false;
+    }
 	if (!pending->get_password_valid() && tokens[0] != "PASS"){
 		return false;
 	}

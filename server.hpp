@@ -49,6 +49,8 @@ class Server
 		void to_user(User sender, std::string msg, std::string target, std::vector<User> users);
 		void to_channel(User sender, std::string msg,std::string target, std::vector <Channel> cha);
 		void deal_with_bot(User sender, std::string msg);
+
+		void kickFromChannels(int fd);
 };
 
 #endif

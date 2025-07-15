@@ -59,6 +59,7 @@ void Server::start_server()
 				{
 					close (pfds[i].fd);
 					std::cout << "Client disconnected!" << std::endl;
+					kickFromChannels(pfds[i].fd);
 					remove_pending_client(pfds[i].fd);
 					remove_user(pfds[i].fd);
 					pfds.erase(pfds.begin() + i);
@@ -73,6 +74,8 @@ void Server::start_server()
 					{
 						std::string save1 = pending->getBuffer();
 						save1 += buff;
+						if (save1.size() >= 1024)
+							pending->setBufferEmpty();
 						if (save1.find('\n') != std::string::npos){
 							pending->setBufferEmpty();
 							std::vector<std::string> tokens = splitByLine(save1);
@@ -94,6 +97,8 @@ void Server::start_server()
 					else if (user)
 					{
 						std::string save2 = user->getBuffer();
+						if (save2.size() >= 1024)
+							user->setBufferEmpty();
 						save2 += buff;
 						if (save2.find('\n') != std::string::npos){
 							user->setBufferEmpty();
@@ -222,5 +227,14 @@ void Server::dealWIthUser(std::string& buff, User* user){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
 	}
 	else {
+
+	}
+}
+
+void Server::kickFromChannels(int fd){
+	for (size_t i=0; i < channels.size(); ++i){
+		if (channels[i].isUserInChannel(fd)){
+			channels[i].removeUser(fd);
+		}
 	}
 }
