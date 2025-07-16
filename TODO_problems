@@ -1,11 +1,11 @@
 prompt :
 		PRIVMSG
-		PRIVMSG ndk
+		PRIVMSG vspdwjdk
 even prompts like these doesn't make this if (command == "PRIVMSG") true
 so won't go to handlePrivateMessage function .
 
 
 
-in a command like "PRIVMSG bot TIME" in the input
-when I check for (msg == "TIME"), its always false because there is something with "TIME" a \n or \r or idk ...
-
+"RPL_PRIVMSG(sender.getNickname() , sender.getNickname(), invalid)"
+when the message is to the bot, and not valid message , the sender creates conversation with himself becuase I treat the reply as a private message,soo a gotta handel it somehow
+because of this

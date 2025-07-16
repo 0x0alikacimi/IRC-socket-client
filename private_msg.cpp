@@ -125,7 +125,8 @@ void Server::deal_with_bot(User sender, std::string msg)
 	std::string rep_msg;
 	if (!msg.empty() && msg[msg.size() - 1] == '\n')
 		msg.erase(msg.size() - 1);
-	/*this is always false becuase "TIME" comes with something else*/
+	if (!msg.empty() && msg[msg.size() - 1] == '\r')
+		msg.erase(msg.size() - 1);
 	if (msg == "TIME")
 	{
 		User *bot_use = this->getDelUser(bot_name);
@@ -141,10 +142,10 @@ void Server::deal_with_bot(User sender, std::string msg)
 	}
 	else
 	{
-		std::cout << "invalid" << std::endl;
 		std::string invalid =   "is an invalid option for bot\n";
 		rep_msg = RPL_PRIVMSG(sender.getNickname() , sender.getNickname(), invalid);/*this not valid because it creates a conversation between the sender and itself*/
-		send(sender.get_fd(), invalid.c_str(), invalid.size(), 0);
+		// send(sender.get_fd(), invalid.c_str(), invalid.size(), 0);
+		send_msg(sender.get_fd(), rep_msg);
 	}
 }
 
