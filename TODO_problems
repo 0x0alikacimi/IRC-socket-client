@@ -1,7 +1,0 @@
-prompt :
-		PRIVMSG
-		PRIVMSG vspdwjdk
-even prompts like these doesn't make this "if (command == "PRIVMSG")" true
-so it won't go to handlePrivateMessage function .
-
-
