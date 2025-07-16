@@ -39,7 +39,13 @@ void Server::start_server()
 			struct pollfd new_pfd; new_pfd.fd = new_users_fd; new_pfd.events = POLLIN; new_pfd.revents = 0;
 			pfds.push_back(new_pfd);
 
-			pending_users.push_back(new_users_fd);
+			char ip[INET_ADDRSTRLEN];
+			inet_ntop(AF_INET, &client_addr.sin_addr, ip, sizeof(ip));
+			PendingClient new_pending(new_users_fd);
+			std::string ip_str(ip);
+			std::cout << ip_str << std::endl;
+			new_pending.set_client_ip(ip_str);
+			pending_users.push_back(new_pending);
 			std::cout << "New client connected, waiting for authentication..." << std::endl;
 		}
 
@@ -85,7 +91,7 @@ void Server::start_server()
 									std::string msg = "Welcome to the Internet Relay Network " + pending->getNickname() + "!" + pending->getUsername() + "@" + pending->getHostname();
 									sendReply(pending->get_fd(), RPL_WELCOME(pending->getNickname(), msg));
 									std::cout << msg << std::endl;
-									User new_user(pending->get_fd(), pending->getUsername(), pending->getHostname(), pending->getServername(), pending->getRealname(), pending->getNickname());
+									User new_user(pending->get_fd(), pending->getUsername(), pending->get_ip_client(), pending->getServername(), pending->getRealname(), pending->getNickname());
 									users.push_back(new_user);
 									remove_pending_client(pending->get_fd());
 								}

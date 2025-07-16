@@ -5,9 +5,6 @@
 #include <sstream>
 #include <sys/socket.h>
 
-#define POSTFIX "\r\n"
-#define RPL_PRIVMSG(sender, target, msg) ":" + sender + " PRIVMSG " + target + " :" + msg + POSTFIX
-
 void	send_msg(int fd, std::string  msg)
 {
 	send(fd, msg.c_str(), msg.size(), 0);

@@ -12,6 +12,7 @@ class PendingClient{
 		std::string nickname;
 		std::string password;
 		std::string buffer;
+		std::string client_ip;
 		int user_fd;
 
 		bool password_set;
@@ -53,6 +54,9 @@ class PendingClient{
 		void setRealname(std::string& username);
 		void setNickname(std::string& nickname);
 		void setPassword(std::string& password);
+
+		void set_client_ip(std::string &ip);
+		std::string get_ip_client() const;
 
 		bool isNicknameSet() const;
 		bool isUsernameSet() const;

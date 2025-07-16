@@ -242,4 +242,11 @@ void PendingClient::setBufferEmpty(){
 	this->buffer = "";
 }
 
-
+void PendingClient::set_client_ip(std::string &ip)
+{
+	this->client_ip = ip;
+}
+std::string PendingClient::get_ip_client() const
+{
+	return (client_ip);
+}

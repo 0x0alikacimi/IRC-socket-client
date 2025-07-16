@@ -2,7 +2,7 @@
 #include "replies.hpp"
 #include "user.hpp"
 
-const std::string getIpadd(int client_fd);
+// const std::string getIpadd(int client_fd);
 
 void	send_msg(int fd, std::string  msg)
 {
@@ -49,7 +49,7 @@ void Server::to_user(User sender, std::string msg, std::string target, std::vect
 	}
 	if (found == true)
 	{
-		rep_msg = RPL_AWAY(sender.getNickname(), sender.getUsername(), getIpadd(sender.get_fd()), msg, target);
+		rep_msg = RPL_AWAY(sender.getNickname(), sender.getUsername(), sender.getHostname(), msg, target);
 		send_msg(users[i].get_fd(), rep_msg);
 	}
 	else
@@ -59,18 +59,18 @@ void Server::to_user(User sender, std::string msg, std::string target, std::vect
 	}
 }
 
-const std::string getIpadd(int client_fd)
-{
-		struct sockaddr_in addr;
-		socklen_t addr_len = sizeof(addr);
-		char ip[INET_ADDRSTRLEN];
-		if (getpeername(client_fd, (struct sockaddr*)&addr, &addr_len) == -1)
-			return "unknown";
-		std::string ipStr = inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
-		if (!ipStr.empty())
-			return ip;
-		return "unknown";
-}
+// const std::string getIpadd(int client_fd)
+// {
+// 		struct sockaddr_in addr;
+// 		socklen_t addr_len = sizeof(addr);
+// 		char ip[INET_ADDRSTRLEN];
+// 		if (getpeername(client_fd, (struct sockaddr*)&addr, &addr_len) == -1)
+// 			return "unknown";
+// 		std::string ipStr = inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
+// 		if (!ipStr.empty())
+// 			return ip;
+// 		return "unknown";
+// }
 
 void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User> users)
 {
@@ -81,7 +81,7 @@ void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User>
 		User *u = getUserByfd(users_fd[i], users);
 		if(u && u->getNickname() != sender.getNickname())
 		{
-			rep_msg = ":" + sender.getNickname() + "!~" + sender.getUsername() + "@" + getIpadd(sender.get_fd()) + " PRIVMSG " + this->getName() + " :" + msg + "\r\n";
+			rep_msg = ":" + sender.getNickname() + "!~" + sender.getUsername() + "@" + sender.getHostname() + " PRIVMSG " + this->getName() + " :" + msg + "\r\n";
 			send_msg(users_fd[i], rep_msg);
 		}
 		i++;
@@ -145,6 +145,7 @@ void Server::deal_with_bot(User sender, std::string msg)
 	else
 	{
 		std::string invalid = msg + " is an invalid option for bot\n";
+		// RPL_AWAY("bot", "bot", "localhost", invalid, sender.getNickname());
 		rep_msg = RPL_PRIVMSG(bot_name , sender.getNickname(), invalid);
 		send_msg(sender.get_fd(), rep_msg);
 	}
