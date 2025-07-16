@@ -226,8 +226,9 @@ void Server::dealWIthUser(std::string& buff, User* user){
 	else if (command == "USER" && tokens.size() == 2){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
 	}
-	else {
-
+	else
+	{
+		// sendReply(user->get_fd(), ERROR_UNKNOWNCOMMAND(user->getNickname(), user->getHostname(), command));
 	}
 }
 

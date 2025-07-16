@@ -1,0 +1,11 @@
+prompt :
+		PRIVMSG
+		PRIVMSG ndk
+even prompts like these doesn't make this if (command == "PRIVMSG") true
+so won't go to handlePrivateMessage function .
+
+
+
+in a command like "PRIVMSG bot TIME" in the input
+when I check for (msg == "TIME"), its always false because there is something with "TIME" a \n or \r or idk ...
+
