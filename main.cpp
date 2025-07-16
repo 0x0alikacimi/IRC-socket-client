@@ -1,73 +1,35 @@
-#include <iostream>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <vector>
-#include <fcntl.h>
-#include <poll.h>
+#include "server.hpp"
 
+<<<<<<< HEAD
 #define DEF_PROTOCOL 0 /*the default protocol for IPv4 TCP, which is TCP itself.*/
 #define MAX_PENDING 1 /*is the backlog queue size (max pending connections waiting).*/
 #define BLOCK_WAIT -1 /*blocks indefinitely until at least one socket has some activity*/
 
 class User
+=======
+bool valid(std::string str)
+>>>>>>> master
 {
-	private :
-		std::string name;
-		int client_fd;
-	public :
-		User(int fd);
-		int get_fd() const;
-};
-
-int User::get_fd() const
-{
-	return (client_fd);
-}
-
-User::User(int fd):client_fd(fd)
-{
-	/*init the rest of data later */
-}
-
-class Irc
-{
-	private :
-		int server_fd;
-		std::vector <User> users;
-		std::string password;
-		int port;
-	public :
-		Irc(int port, std::string password);
-		void start_server();
-		User *look_for(int fd);
-};
-
-User *Irc::look_for(int fd)
-{
-	int i = 0;
-	while (i < users.size())
+	size_t i = 0;
+	while (str[i])
 	{
-		if (users[i].get_fd() == fd)
-			return (&users[i]);
+		if (str[i] == ' ' || str[i] == '	')
+			return (false);
 		i++;
 	}
-	return (NULL);
+	return (true);
 }
 
+<<<<<<< HEAD
 void Irc::start_server()
+=======
+
+int main (int ac , char **av)
+>>>>>>> master
 {
-	std::cout << "srever is lestenning to port : " << port << "\n" << std::endl;
-	std::vector<pollfd> pfds;
-
-	struct pollfd pfd; pfd.fd = server_fd; pfd.events = POLLIN;pfd.revents = 0;
-	pfds.push_back(pfd);
-	struct sockaddr_in client_addr;
-	socklen_t client_len = sizeof(client_addr);
-
-	while (true)
+	if (ac == 3)
 	{
+<<<<<<< HEAD
 		int check_poll = poll(pfds.data(), pfds.size(), BLOCK_WAIT);
 		if (check_poll < 0)
 		{
@@ -75,13 +37,20 @@ void Irc::start_server()
 			break;
 		}
 		if (pfds[0].revents & POLLIN)
+=======
+		try
+>>>>>>> master
 		{
-			int new_client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);/*!*/
-			if (new_client_fd < 0)
+			signal(SIGQUIT, Server::sig_handler);
+			signal(SIGINT, Server::sig_handler);
+			signal(SIGPIPE, SIG_IGN);
+			int port = std::atoi(av[1]);
+			if (port < 1024 || port > 49151)
 			{
-				std::cerr << "error accepting new client." << std::endl;
-				continue;
+				std::cerr << "invalid port number" << std::endl;
+				return 1;
 			}
+<<<<<<< HEAD
 			/*fcntl(new_client_fd, F_SETFL, O_NONBLOCK);*/
 			struct pollfd new_pfd; new_pfd.fd = new_client_fd; new_pfd.events = POLLIN; new_pfd.revents = 0;
 			pfds.push_back(new_pfd);
@@ -111,10 +80,24 @@ void Irc::start_server()
 
 					std::cout << "received form " << i << ": " << buff << std::endl;
 				}
+=======
+			std::string password = av[2];
+			if (password.size() < 3 || !valid(password))
+			{
+				std::cerr << "invalid password " << std::endl;
+				return 1;
+>>>>>>> master
 			}
-			i++;
+			Server server(port, password);
+			server.start_server();
+		}
+		catch(std::exception &e)
+		{
+			std::cerr << e.what() << std::endl;
+			return (1);
 		}
 	}
+<<<<<<< HEAD
 	close(server_fd);
 }
 
@@ -162,5 +145,10 @@ int main (int ac , char **av)
 			return (1);
 		}
 		return (0);
+=======
+	else
+	{
+		std::cerr << "Usage: " << av[0] << " <port> <password>" << std::endl;
+>>>>>>> master
 	}
 }
