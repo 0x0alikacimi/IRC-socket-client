@@ -142,9 +142,8 @@ void Server::deal_with_bot(User sender, std::string msg)
 	}
 	else
 	{
-		std::string invalid =   "is an invalid option for bot\n";
-		rep_msg = RPL_PRIVMSG(sender.getNickname() , sender.getNickname(), invalid);/*this not valid because it creates a conversation between the sender and itself*/
-		// send(sender.get_fd(), invalid.c_str(), invalid.size(), 0);
+		std::string invalid = msg + " is an invalid option for bot\n";
+		rep_msg = RPL_PRIVMSG(bot_name , sender.getNickname(), invalid);
 		send_msg(sender.get_fd(), rep_msg);
 	}
 }

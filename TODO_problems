@@ -1,11 +1,7 @@
 prompt :
 		PRIVMSG
 		PRIVMSG vspdwjdk
-even prompts like these doesn't make this if (command == "PRIVMSG") true
-so won't go to handlePrivateMessage function .
+even prompts like these doesn't make this "if (command == "PRIVMSG")" true
+so it won't go to handlePrivateMessage function .
 
 
-
-"RPL_PRIVMSG(sender.getNickname() , sender.getNickname(), invalid)"
-when the message is to the bot, and not valid message , the sender creates conversation with himself becuase I treat the reply as a private message,soo a gotta handel it somehow
-because of this
