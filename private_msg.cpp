@@ -2,6 +2,8 @@
 #include "replies.hpp"
 #include "user.hpp"
 
+const std::string getIpadd(int client_fd);
+
 void	send_msg(int fd, std::string  msg)
 {
 	send(fd, msg.c_str(), msg.size(), 0);
@@ -47,7 +49,7 @@ void Server::to_user(User sender, std::string msg, std::string target, std::vect
 	}
 	if (found == true)
 	{
-		rep_msg = RPL_PRIVMSG(sender.getNickname(), target, msg);
+		rep_msg = RPL_AWAY(sender.getNickname(), sender.getUsername(), getIpadd(sender.get_fd()), msg, target);
 		send_msg(users[i].get_fd(), rep_msg);
 	}
 	else
@@ -79,7 +81,7 @@ void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User>
 		User *u = getUserByfd(users_fd[i], users);
 		if(u && u->getNickname() != sender.getNickname())
 		{
-			rep_msg = ":" + sender.getNickname() + "!" + sender.getUsername() + "@" + getIpadd(sender.get_fd()) + " PRIVMSG " + this->getName() + " :" + msg + "\r\n";
+			rep_msg = ":" + sender.getNickname() + "!~" + sender.getUsername() + "@" + getIpadd(sender.get_fd()) + " PRIVMSG " + this->getName() + " :" + msg + "\r\n";
 			send_msg(users_fd[i], rep_msg);
 		}
 		i++;

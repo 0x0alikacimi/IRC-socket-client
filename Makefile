@@ -7,10 +7,10 @@ SRC_FILES_BONUS = bonus/bot.cpp
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 OBJ_FILES_BONUS = $(SRC_FILES_BONUS:.cpp=.o)
 
-HEADERS = server.hpp user.hpp pendingClient.cpp channel.hpp
+HEADERS = server.hpp user.hpp pendingClient.cpp channel.hpp replies.hpp
 
 CC = c++
-#-fsanitize=address -g3 
+#-fsanitize=address -g3
 CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 all : $(NAME)
