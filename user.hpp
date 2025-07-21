@@ -13,8 +13,6 @@
 #include <cstdlib>
 #include <csignal>
 
-#define BLOCK_WAIT -1 /*blocks indefinitely until at least one socket has some activity*/
-
 class User
 {
 	private :

@@ -14,6 +14,9 @@ void Server::start_server()
 	std::cout << "srever is lestenning to port : " << port << "\n" << std::endl;
 	std::vector<pollfd> pfds;
 
+	/*pfd.events = POLLIN
+		means “notify me when this socket is ready to read”—in this case, when a new client is trying to connect
+	*/
 	struct pollfd pfd; pfd.fd = server_fd; pfd.events = POLLIN;pfd.revents = 0;
 	pfds.push_back(pfd);
 	struct sockaddr_in client_addr;
@@ -27,7 +30,7 @@ void Server::start_server()
 		{
 			break;
 		}
-		if (pfds[0].revents & POLLIN)
+		if (pfds[0].revents & POLLIN)/*if the server socket (pfds[0]) has incoming connection(s) ready to accept*/
 		{
 			int new_users_fd = accept(server_fd, (struct sockaddr *)&client_addr, &client_len);
 			if (new_users_fd < 0)
@@ -40,6 +43,7 @@ void Server::start_server()
 			pfds.push_back(new_pfd);
 
 			char ip[INET_ADDRSTRLEN];
+			/*inet_ntop : converts the binary IPv4 address to a readable string*/
 			inet_ntop(AF_INET, &client_addr.sin_addr, ip, sizeof(ip));
 			PendingClient new_pending(new_users_fd);
 			std::string ip_str(ip);
@@ -141,10 +145,21 @@ Server::Server(int port, std::string password) : port(port), password(password)
 	if (server_fd == -1)
 		throw std::runtime_error("Failed to create socket");
 
+	/*
+	SOL_SOCKET: socket-level options.
+
+	SO_REUSEADDR :
+		allows the server to reuse the port immediately after a previous instance closed,
+		even if it's still in TIME_WAIT
+	*/
 	int opt = 1;
 	if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
 		throw std::runtime_error("Failed to set socket options");
 
+	/*Changes the socket mode to non-blocking.
+	makes calls like read an accept return immediately if there’s nothing to do
+		F_SETFL: set file status flags.
+		O_NONBLOCK: flag to enable non-blocking mode*/
 	fcntl(server_fd, F_SETFL, O_NONBLOCK);
 
 	sockaddr_in serv_add;
@@ -153,15 +168,17 @@ Server::Server(int port, std::string password) : port(port), password(password)
 	serv_add.sin_addr.s_addr = INADDR_ANY;
 	serv_add.sin_port = htons(port);
 
+	/*Binds the server socket to a specific IP address and port so it can listen for incoming connections there*/
 	if (bind(server_fd, (sockaddr *)&serv_add, sizeof(serv_add)))
 		throw std::runtime_error("Failed to bind socket");
 
-	/*1 is the backlog queue size (max pending connections waiting).*/
-	if(listen(server_fd, 1))
+	/*
+	Marks the socket as a passive socket to accept incoming connection requests
+	SOMAXCONN(max pending connections waiting)
+	*/
+	if(listen(server_fd, SOMAXCONN))
 		throw std::runtime_error("Failed to listen on socket");
 }
-
-
 
 std::vector <User> Server::getUsers(){
 	return this->users;

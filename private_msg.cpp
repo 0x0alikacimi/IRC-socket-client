@@ -2,8 +2,6 @@
 #include "replies.hpp"
 #include "user.hpp"
 
-// const std::string getIpadd(int client_fd);
-
 void	send_msg(int fd, std::string  msg)
 {
 	send(fd, msg.c_str(), msg.size(), 0);
@@ -58,19 +56,6 @@ void Server::to_user(User sender, std::string msg, std::string target, std::vect
 		send_msg(sender.get_fd(), rep_msg);
 	}
 }
-
-// const std::string getIpadd(int client_fd)
-// {
-// 		struct sockaddr_in addr;
-// 		socklen_t addr_len = sizeof(addr);
-// 		char ip[INET_ADDRSTRLEN];
-// 		if (getpeername(client_fd, (struct sockaddr*)&addr, &addr_len) == -1)
-// 			return "unknown";
-// 		std::string ipStr = inet_ntop(AF_INET, &addr.sin_addr, ip, sizeof(ip));
-// 		if (!ipStr.empty())
-// 			return ip;
-// 		return "unknown";
-// }
 
 void Channel::broad_cast_channel(std::string msg, User sender, std::vector<User> users)
 {
@@ -145,7 +130,6 @@ void Server::deal_with_bot(User sender, std::string msg)
 	else
 	{
 		std::string invalid = msg + " is an invalid option for bot\n";
-		// RPL_AWAY("bot", "bot", "localhost", invalid, sender.getNickname());
 		rep_msg = RPL_PRIVMSG(bot_name , sender.getNickname(), invalid);
 		send_msg(sender.get_fd(), rep_msg);
 	}
