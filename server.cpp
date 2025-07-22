@@ -24,8 +24,9 @@ void Server::start_server()
 
 	while (Server::sig_serv)
 	{
-		int check_poll = poll(pfds.data(), pfds.size(), -1);
+		/* Waits for one or more file descriptors to become ready (e.g., ready for reading or writing).*/
 		/* -1 blocks indefinitely until at least one socket has some activity */
+		int check_poll = poll(pfds.data(), pfds.size(), -1);
 		if (check_poll < 0)
 		{
 			break;
