@@ -25,7 +25,7 @@ void Server::start_server()
 	while (Server::sig_serv)
 	{
 		int check_poll = poll(pfds.data(), pfds.size(), -1);
-		/* 1 blocks indefinitely until at least one socket has some activity */
+		/* -1 blocks indefinitely until at least one socket has some activity */
 		if (check_poll < 0)
 		{
 			break;
@@ -164,9 +164,9 @@ Server::Server(int port, std::string password) : port(port), password(password)
 
 	sockaddr_in serv_add;
 	std::memset(&serv_add, 0, sizeof(serv_add));
-	serv_add.sin_family = AF_INET;
-	serv_add.sin_addr.s_addr = INADDR_ANY;
-	serv_add.sin_port = htons(port);
+	serv_add.sin_family = AF_INET;/*set to AF_INET for IPv4*/
+	serv_add.sin_addr.s_addr = INADDR_ANY;/*means listen on all interfaces (e.g., LAN IP and localhost)*/
+	serv_add.sin_port = htons(port);/*network byte order*/
 
 	/*Binds the server socket to a specific IP address and port so it can listen for incoming connections there*/
 	if (bind(server_fd, (sockaddr *)&serv_add, sizeof(serv_add)))
