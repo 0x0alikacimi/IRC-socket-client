@@ -15,6 +15,7 @@ class Server
 		std::vector <PendingClient> pending_users;
 		std::vector <Channel> channels;
 		std::string password;
+		std::set<std::string> joinedChannels;
 	public :
 		static bool sig_serv;
 		static void sig_handler(int sig);
@@ -51,6 +52,11 @@ class Server
 		void deal_with_bot(User sender, std::string msg);
 
 		void kickFromChannels(int fd);
+		void nickChangeCmd(std::vector<std::string> tokens, User* user);
+
+		Channel* getChannel(const std::string& name);
+		std::vector<Channel>& getChannels();    
+
 };
 
 #endif

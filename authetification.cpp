@@ -87,3 +87,45 @@ void PendingClient::handlePassCommand(std::string& password, std::string& truePa
 		this->password_valid = true;
 	}
 }
+
+bool checkNickname(std::string& nickname, std::vector <User> users){
+	std::vector<User>::const_iterator it = users.begin();
+    for (; it != users.end(); ++it) {
+        if (it->getNickname() == nickname) {
+			sendReply(it->get_fd(), ERR_NICKNAMEINUSE(nickname));
+            return false;
+        }
+    }
+    return true;
+}
+
+void Server::nickChangeCmd(std::vector<std::string> tokens, User* user) {
+	if (tokens.size() < 1) {
+        return;
+    }
+	std::string command = parsse(tokens[0]);
+    if (tokens.size() < 2) {
+        sendReply(user->get_fd(), ERR_NEEDMOREPARAMS(command));
+        return;
+    }
+    std::string newNick = parsse(tokens[1]);
+    std::string oldNick = user->getNickname();
+    if (!checkNickname(newNick, users)) {
+        sendReply(user->get_fd(), ERR_NICKNAMEINUSE(newNick));
+        return;
+    }
+    std::string msg = ":" + oldNick + "!" + user->getUsername() + "@" + user->getHostname() + " NICK :" + newNick + "\r\n";
+    const std::set<std::string>& userChannels = user->getChannels();
+    for (std::set<std::string>::const_iterator it = userChannels.begin(); it != userChannels.end(); ++it) {
+        Channel* ch = getChannel(*it);
+        if (!ch) continue;
+        const std::vector<int>& fds = ch->getUsers_fd();
+        for (size_t i = 0; i < fds.size(); ++i) {
+            if (fds[i] != user->get_fd()) {
+                sendReply(fds[i], msg);
+            }
+        }
+    }
+    sendReply(user->get_fd(), msg);
+    user->setNickname(newNick);
+}

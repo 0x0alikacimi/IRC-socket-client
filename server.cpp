@@ -243,7 +243,10 @@ void Server::dealWIthUser(std::string& buff, User* user){
 	else if (command == "MODE"){
 		modeCmd(tokens, user);
 	}
-	else if ((command == "USER" || command == "NICK" || command == "PASS") && tokens.size() == 2){
+	else if (command == "NICK"){
+		nickChangeCmd(tokens, user);
+	}
+	else if ((command == "USER" || command == "PASS") && tokens.size() == 2){
 		sendReply(user->get_fd(), ERR_ALREADYREGISTRED(user->getNickname()));
 	}
 	else if (command == "USER" && tokens.size() == 2){
@@ -258,8 +261,47 @@ void Server::dealWIthUser(std::string& buff, User* user){
 
 void Server::kickFromChannels(int fd){
 	for (size_t i=0; i < channels.size(); ++i){
-		if (channels[i].isUserInChannel(fd)){
-			channels[i].removeUser(fd);
+		bool yes = false;
+		Channel& channel = channels[i];
+		if (channel.isUserInChannel(fd)){
+			if (channel.isOperator(fd)){
+				if (!channel.checkOperators()){
+					if (channel.getUsers_fd().size() > 1){
+						yes = true;
+					}
+				}
+			}
+			User* user = channel.getUserByfd(fd, users);
+			if (!user)
+				return;
+			channel.removeUser(fd);
+			user->leaveChannel(channel.getName());
+			std::string msg = ":" + user->getNickname() + "!" + user->getUsername() + "@" + user->getHostname() + " QUIT :Client Quit\r\n";
+			const std::vector<int>& user_fds = channel.getUsers_fd();
+			for (size_t i = 0; i < user_fds.size(); ++i) {
+				sendReply(user_fds[i], msg);
+			}
+			if (yes){
+				User* opUser = channel.getUserByfd(channel.getUsers_fd()[0], users);
+				channel.addOperator(opUser->get_fd());
+				std::string msg = ":" + opUser->getNickname() + "!" + opUser->getUsername() + "@" + opUser->getHostname() +
+	                  " MODE " + channel.getName() + " +o " + opUser->getNickname() + "\r\n";
+				for (std::vector<int>::const_iterator it = channel.getUsers_fd().begin(); it != channel.getUsers_fd().end(); ++it){
+					sendReply(*it, msg);
+				}
+			}
 		}
 	}
+}
+
+Channel* Server::getChannel(const std::string& name) {
+    for (size_t i = 0; i < channels.size(); ++i) {
+        if (channels[i].getName() == name)
+            return &channels[i];
+    }
+    return NULL;
+}
+
+std::vector<Channel>& Server::getChannels() {
+    return this->channels;
 }

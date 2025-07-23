@@ -120,3 +120,9 @@ User* Channel::getUserByfd(int fd, std::vector <User>& users) const {
 			return &(*it);
 	return NULL;
 }
+
+bool Channel::checkOperators(){
+	if (operators_fd.size() > 1)
+		return true;
+	return false;
+}

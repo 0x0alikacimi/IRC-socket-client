@@ -60,6 +60,7 @@ class Channel{
 		User* getUserByfd(int fd, std::vector <User>& users) const;
 
 		void broad_cast_channel(std::string msg, User sender, std::vector<User> users);
+		bool checkOperators();
 };
 
 #endif

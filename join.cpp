@@ -63,6 +63,7 @@ void Channel::addUser(User* user, const std::string& key, std::vector <User>& us
     users_fd.push_back(user->get_fd());
 	currentUsers++;
 	user->plusChannel();
+	user->joinChannel(name);
 	if (justCreated){
 		addOperator(user->get_fd());
 		justCreated = false;

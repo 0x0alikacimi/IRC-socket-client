@@ -12,6 +12,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <csignal>
+#include <set>
 
 class User
 {
@@ -24,6 +25,7 @@ class User
 		std::string nickname;
 		int nbrChannels;
 		std::string buffer;
+		std::set<std::string> joinedChannels;
 	public :
 		User(int fd, std::string username, std::string hostname, std::string servername, std::string realname, std::string nickname);
 		int get_fd() const;
@@ -43,6 +45,10 @@ class User
 		void setServername(std::string& username);
 		void setRealname(std::string& username);
 		void setNickname(std::string& nickname);
+
+		const std::set<std::string>& getChannels() const;
+		void joinChannel(const std::string& name);
+    	void leaveChannel(const std::string& name);
 };
 
 #endif

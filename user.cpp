@@ -1,5 +1,6 @@
 #include "server.hpp"
 #include "user.hpp"
+#include "replies.hpp"
 
 int User::get_fd() const{
 	return user_fd;
@@ -66,4 +67,16 @@ void User::setBuffer(std::string buffer){
 
 void User::setBufferEmpty(){
 	this->buffer = "";
+}
+
+const std::set<std::string>& User::getChannels() const {
+    return this->joinedChannels;
+}
+
+void User::joinChannel(const std::string& name) {
+    this->joinedChannels.insert(name);
+}
+
+void User::leaveChannel(const std::string& name) {
+    this->joinedChannels.erase(name);
 }
