@@ -48,7 +48,6 @@ void Server::start_server()
 			inet_ntop(AF_INET, &client_addr.sin_addr, ip, sizeof(ip));
 			PendingClient new_pending(new_users_fd);
 			std::string ip_str(ip);
-			std::cout << ip_str << std::endl;
 			new_pending.set_client_ip(ip_str);
 			pending_users.push_back(new_pending);
 			std::cout << "New client connected, waiting for authentication..." << std::endl;
