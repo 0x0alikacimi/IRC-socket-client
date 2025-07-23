@@ -94,7 +94,7 @@ void Server::start_server()
 								{
 									std::string msg = "Welcome to the Internet Relay Network " + pending->getNickname() + "!" + pending->getUsername() + "@" + pending->getHostname();
 									sendReply(pending->get_fd(), RPL_WELCOME(pending->getNickname(), msg));
-									std::cout << msg << std::endl;
+									std::cout << "\n" << "Welcome to the Internet Relay Network " << pending->getNickname() << "\n" << std::endl;
 									User new_user(pending->get_fd(), pending->getUsername(), pending->get_ip_client(), pending->getServername(), pending->getRealname(), pending->getNickname());
 									users.push_back(new_user);
 									remove_pending_client(pending->get_fd());
@@ -191,7 +191,7 @@ Channel* Server::getChannel(std::string& name, std::string& key){
 			return &(*it);
 	Channel new_channel(name, key);
 	channels.push_back(new_channel);
-	return &channels.back();
+	return &channels[channels.size() - 1];
 }
 
 Channel* Server::getChannelName(std::string& delChannel){
