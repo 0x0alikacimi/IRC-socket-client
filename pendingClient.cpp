@@ -169,6 +169,7 @@ std::vector<std::string> splitBySpace(const std::string& input) {
 			}
 		} else {
 			token += input[i];
+			token = parsse(token);
 		}
 	}
 	if (!token.empty()) {
