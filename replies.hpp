@@ -4,7 +4,7 @@
 
 #define MAX_GLOBAL_USERS 50
 #define MAX_CHANNELS 10
-#define PREFIX ":127.0.0.1 "
+#define PREFIX ":IRCServer "
 #define POSTFIX "\r\n"
 
 //Errors :
