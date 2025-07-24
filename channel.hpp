@@ -26,6 +26,8 @@ class Channel{
         const std::string& getKey() const;
 		const  std::vector <int>& getUsers_fd() const;
 		bool getTopicRest() const ;
+		std::string getUserList(std::vector <User>& users) const;
+		User* getUserByfd(int fd, std::vector <User>& users) const;
 
         void setTopic(const std::string& topic);
 		void setTopicRest(bool is);
@@ -45,22 +47,18 @@ class Channel{
         bool hasKey();
         bool checkKey(const std::string& key) const;
 		bool isFull() const;
+		bool checkOperators();
 
 		void handleJoinCommand(User* user, std::string& key, std::vector <User>& users);
 		void handleKickCommand(User* user, User* delUser, std::string& delComment);
-
 		void handleSingleMode(std::vector<std::string> tokens, User* user, User* opUser, std::string mode);
-
 		void handleInviteMode(std::vector<std::string> tokens, User* user, std::string mode);
 		void handleTopicMode(std::vector<std::string> tokens, User* user, std::string mode);
 		void handleLimitMode(std::vector<std::string> tokens, User* user, std::string mode);
 		void handleKeyMode(std::vector<std::string> tokens, User* user, std::string mode);
 		void handleOperatorMode(std::vector<std::string> tokens, User* user, User* opUser, std::string mode);
-		std::string getUserList(std::vector <User>& users) const;
-		User* getUserByfd(int fd, std::vector <User>& users) const;
 
 		void broad_cast_channel(std::string msg, User sender, std::vector<User> users);
-		bool checkOperators();
 };
 
 #endif

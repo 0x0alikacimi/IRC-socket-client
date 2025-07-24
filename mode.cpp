@@ -156,7 +156,7 @@ void Channel::handleTopicMode(std::vector<std::string> tokens, User* user,  std:
 }
 
 void Channel::handleLimitMode(std::vector<std::string> tokens, User* user,  std::string mode){
-	if (mode[0] == '+' && tokens.size() == 4){
+	if (mode[0] == '+' && tokens.size() == 4 && atoi(tokens[3].c_str())){
 		maxUsers = atoi(parsse(tokens[3]).c_str());
 		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
 			sendReply(*it, RPL_UMODEIS(std::string(""), name, "+l", tokens[3]));
@@ -247,13 +247,17 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "-t", std::string("")));
 				}
 			}
-			else if (mode[i] == 'l' && mode[i - 1] == '+' ){
-				channel->setMaxUsers(atoi(parsse(tokens[3 + curr]).c_str()));
-				for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
-					sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "+l", tokens[3 + curr]));
-
+			else if (mode[i] == 'l' && mode[i - 1] == '+'){
+				if (atoi(parsse(tokens[3 + curr]).c_str())){
+					channel->setMaxUsers(atoi(parsse(tokens[3 + curr]).c_str()));
+					for (std::vector<int>::const_iterator it = (channel->getUsers_fd()).begin(); it != (channel->getUsers_fd()).end(); ++it){
+						sendReply(*it, RPL_UMODEIS(std::string(""), channel->getName(), "+l", tokens[3 + curr]));
+					}
 				}
-				curr++;
+				else {
+					sendReply(user->get_fd(), ERR_INVALIDMODEPARM(channel->getName(), mode));
+					curr++;
+				}
 			}
 			else if (mode[i] == 'l' && mode[i - 1] == '-'){
 				channel->setMaxUsers(MAX_GLOBAL_USERS);
@@ -309,7 +313,7 @@ void Server::handleMultipleModes(Channel* channel, std::vector<std::string> toke
 				curr++;
 			}
 			else {
-				std::cout << "wa 0wada hadi" << std::endl;
+				sendReply(user->get_fd() ,ERR_UNKNOWNMODE(std::string(""), channel->getName() , mode));
 				return ;
 			}
 		}

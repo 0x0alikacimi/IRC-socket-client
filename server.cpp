@@ -308,3 +308,25 @@ Channel* Server::getChannel(const std::string& name) {
 std::vector<Channel>& Server::getChannels() {
     return this->channels;
 }
+
+bool Server::checkNickname(std::string& nickname, int user_fd){
+	std::vector<User>::const_iterator it = users.begin();
+	if (nickname.empty() || !isValidNickname(nickname)) {
+        sendReply(user_fd, ERR_ERRONEUSNICKNAME(nickname));
+        return false;
+    }
+    for (; it != users.end(); ++it) {
+        if (it->getNickname() == nickname) {
+			sendReply(user_fd, ERR_NICKNAMEINUSE(nickname));
+            return false;
+        }
+    }
+	std::vector<PendingClient>::const_iterator itt = pending_users.begin();
+	for (; itt != pending_users.end(); ++itt) {
+		if (itt->getNickname() == nickname) {
+			sendReply(user_fd, ERR_NICKNAMEINUSE(nickname));
+			return false;
+		}
+	}
+    return true;
+}

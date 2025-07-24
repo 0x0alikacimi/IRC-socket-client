@@ -140,8 +140,25 @@ bool PendingClient::checkPassword(std::string& password, std::string& truePasswo
 	return false;
 }
 
+bool isValidNickname(const std::string& nick) {
+    if (nick.empty())
+		return false;
+    if (!isalpha(nick[0]) && nick[0] != '_')
+		return false;
+    for (size_t i = 1; i < nick.length(); ++i) {
+        if (!isalnum(nick[i]) && nick[i] != '-' && nick[i] != '_') {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool PendingClient::checkNickname(std::string& nickname, std::vector <User> users, std::vector <PendingClient> pendingUsers) const{
 	std::vector<User>::const_iterator it = users.begin();
+	 if (nickname.empty() || !isValidNickname(nickname)) {
+        sendReply(user_fd, ERR_ERRONEUSNICKNAME(nickname));
+        return false;
+    }
     for (; it != users.end(); ++it) {
         if (it->getNickname() == nickname) {
 			sendReply(user_fd, ERR_NICKNAMEINUSE(nickname));

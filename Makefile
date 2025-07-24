@@ -1,17 +1,16 @@
 NAME = ircserv
 NAME_BONUS = bot
 
-
 SRC_FILES = user.cpp helpers.cpp main.cpp pendingClient.cpp server.cpp channel.cpp join.cpp kick.cpp authetification.cpp invite.cpp topic.cpp mode.cpp private_msg.cpp
 SRC_FILES_BONUS = bonus/bot.cpp
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 OBJ_FILES_BONUS = $(SRC_FILES_BONUS:.cpp=.o)
 
-HEADERS = server.hpp user.hpp pendingClient.cpp channel.hpp replies.hpp
+HEADERS = server.hpp user.hpp pendingClient.hpp channel.hpp replies.hpp
 
 CC = c++
-#-fsanitize=address -g3
-CFLAGS = -fsanitize=address -g3 -Wall -Wextra -Werror -std=c++98
+
+CFLAGS = -Wall -Wextra -Werror -std=c++98
 
 all : $(NAME)
 

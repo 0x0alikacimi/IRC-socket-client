@@ -80,3 +80,4 @@ void User::joinChannel(const std::string& name) {
 void User::leaveChannel(const std::string& name) {
     this->joinedChannels.erase(name);
 }
+

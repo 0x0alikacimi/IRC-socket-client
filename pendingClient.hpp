@@ -35,9 +35,6 @@ class PendingClient{
 		const std::string getNickname() const;
 		const std::string getPassword() const;
 		const std::string getBuffer() const;
-		void setBufferEmpty();
-		void setBuffer(std::string buffer);
-
 		int get_fd() const;
 		bool get_username_set() const;
 		bool get_hostname_set() const;
@@ -47,16 +44,17 @@ class PendingClient{
 		bool get_password_set() const;
 		bool get_nickname_valid() const;
 		bool get_password_valid() const;
+		std::string get_ip_client() const;
 
+		void setBufferEmpty();
+		void setBuffer(std::string buffer);
 		void setUsername(std::string& username);
 		void setHostname(std::string& username);
 		void setServername(std::string& username);
 		void setRealname(std::string& username);
 		void setNickname(std::string& nickname);
 		void setPassword(std::string& password);
-
 		void set_client_ip(std::string &ip);
-		std::string get_ip_client() const;
 
 		bool isNicknameSet() const;
 		bool isUsernameSet() const;
@@ -81,5 +79,6 @@ class PendingClient{
 	bool checkChannelName(std::string& name);
 	std::string& parsse(std::string& std);
 	void sendReply(int fd, std::string reply);
+	bool isValidNickname(const std::string& nick);
 
 #endif

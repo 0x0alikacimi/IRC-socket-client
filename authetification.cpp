@@ -88,7 +88,7 @@ void PendingClient::handlePassCommand(std::string& password, std::string& truePa
 	}
 }
 
-bool checkNickname(std::string& nickname, std::vector <User> users){
+bool checkNick(std::string& nickname, std::vector <User> users){
 	std::vector<User>::const_iterator it = users.begin();
     for (; it != users.end(); ++it) {
         if (it->getNickname() == nickname) {
@@ -110,8 +110,7 @@ void Server::nickChangeCmd(std::vector<std::string> tokens, User* user) {
     }
     std::string newNick = parsse(tokens[1]);
     std::string oldNick = user->getNickname();
-    if (!checkNickname(newNick, users)) {
-        sendReply(user->get_fd(), ERR_NICKNAMEINUSE(newNick));
+    if (!checkNickname(newNick, user->get_fd())) {
         return;
     }
     std::string msg = ":" + oldNick + "!" + user->getUsername() + "@" + user->getHostname() + " NICK :" + newNick + "\r\n";
