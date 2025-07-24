@@ -11,7 +11,7 @@ HEADERS = server.hpp user.hpp pendingClient.cpp channel.hpp replies.hpp
 
 CC = c++
 #-fsanitize=address -g3
-CFLAGS = -Wall -Wextra -Werror -std=c++98
+CFLAGS = -fsanitize=address -g3 -Wall -Wextra -Werror -std=c++98
 
 all : $(NAME)
 

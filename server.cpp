@@ -98,6 +98,7 @@ void Server::start_server()
 									User new_user(pending->get_fd(), pending->getUsername(), pending->get_ip_client(), pending->getServername(), pending->getRealname(), pending->getNickname());
 									users.push_back(new_user);
 									remove_pending_client(pending->get_fd());
+									break;
 								}
 							}
 						}
@@ -224,6 +225,8 @@ void Server::dealWIthUser(std::string& buff, User* user){
 	std::vector<std::string> tokens = splitBySpace(buff);
 	if (tokens.empty())
 		return;
+	if (!user)
+		return ;
 	std::string command = tokens[0];
 	if (command == "JOIN" && tokens.size() >= 2 && tokens.size() <= 3){
 		joinCmd(tokens, user);
