@@ -179,7 +179,7 @@ void Channel::handleKeyMode(std::vector<std::string> tokens, User* user,  std::s
 			sendReply(*it, RPL_UMODEIS(std::string(""), name, "+k", key));
 		}
 	}
-	else if (mode[0] == '-' && (tokens.size() == 3 || tokens.size() == 4)){
+	else if (mode[0] == '-' && (tokens.size() == 4)){
 		key = std::string("");
 		for (std::vector<int>::const_iterator it = users_fd.begin(); it != users_fd.end(); ++it){
 			sendReply(*it, RPL_UMODEIS(std::string(""), name, "-k", std::string("")));
